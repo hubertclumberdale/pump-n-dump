@@ -1,95 +1,86 @@
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class MarketManager : MonoBehaviour
 {
     [System.Serializable]
-    public class Company
+    public class Market
     {
-        public CompanyType companyType;
-        public int value;
-        public GameObject companyUI; // Riferimento alla UI dell'azienda
+        public MarketScriptable marketData; // Riferimento allo Scriptable Object
+        public int marketValue; // Valore attuale del mercato
+        public Text marketUIText; // UI associata per visualizzare i dati
     }
 
-    public List<Company> companies;
-    public int minValue = 0;
-    public int maxValue = 100;
+    public List<Market> markets; // Lista di tutti i mercati nel gioco
 
-    void Start()
+    private void Start()
     {
-        InitializeCompanies();
-        UpdateCompanyUI();
+        InitializeMarkets();
+        UpdateAllMarketsUI();
     }
 
-    // Inizializza le aziende con valori iniziali
-    private void InitializeCompanies()
+    // Inizializza i mercati con i valori dai MarketScriptable
+    private void InitializeMarkets()
     {
-        foreach (var company in companies)
+        foreach (var market in markets)
         {
-            company.value = Random.Range(25, 75); // Inizializza con un valore casuale
+            market.marketValue = market.marketData.initialValue;
         }
     }
 
-    // Aggiorna il valore di una specifica azienda
-    public void UpdateCompanyValue(CompanyType companyType, int valueChange)
+    // Metodo per modificare il valore di un mercato
+    public void ModifyMarketValue(string marketName, int amount)
     {
-        Company targetCompany = companies.Find(c => c.companyType == companyType);
-        if (targetCompany != null)
+        Market market = markets.Find(m => m.marketData.marketName == marketName);
+        if (market != null)
         {
-            targetCompany.value = Mathf.Clamp(targetCompany.value + valueChange, minValue, maxValue);
-            UpdateCompanyUI();
-
-            // Controlla le condizioni di vittoria/sconfitta
-            CheckGameState(targetCompany);
+            market.marketValue += amount;
+            market.marketValue = Mathf.Clamp(market.marketValue, 0, 100); // Limita il valore tra 0 e 100
+            UpdateMarketUI(market);
+            CheckMarketStatus(market);
+        }
+        else
+        {
+            Debug.LogWarning($"Market {marketName} not found!");
         }
     }
 
-    // Aggiorna l'UI delle aziende
-    private void UpdateCompanyUI()
+    // Metodo per aggiornare l'interfaccia utente del mercato
+    private void UpdateMarketUI(Market market)
     {
-        foreach (var company in companies)
+        
+    }
+
+    // Metodo per controllare lo stato di un mercato (es. se arriva a 0 o 100)
+    private void CheckMarketStatus(Market market)
+    {
+        if (market.marketValue == 0)
         {
-            // Supponiamo che la UI mostri il valore dell'azienda tramite un componente di testo
-            if (company.companyUI != null)
-            {
-                var uiText = company.companyUI.GetComponent<UnityEngine.UI.Text>();
-                if (uiText != null)
-                {
-                    uiText.text = $"{company.companyType}: {company.value}";
-                }
-            }
+            Debug.Log($"{market.marketData.marketName} has reached 0 and is out of the game.");
+            RemoveMarket(market);
+        }
+        else if (market.marketValue == 100)
+        {
+            Debug.Log($"{market.marketData.marketName} has reached 100!");
+            // Aggiungere qui la logica per gestire la vittoria o la perdita
         }
     }
 
-    // Controlla lo stato del gioco basato sui valori delle aziende
-    private void CheckGameState(Company targetCompany)
+    // Metodo per rimuovere un mercato dalla lista attiva (quando raggiunge 0)
+    private void RemoveMarket(Market market)
     {
-        if (targetCompany.value <= minValue)
+        markets.Remove(market);
+        if (market.marketUIText != null)
         {
-            Debug.Log($"Company {targetCompany.companyType} has reached {minValue}. Removing from the game.");
-            RemoveCompany(targetCompany.companyType);
+            market.marketUIText.text = $"{market.marketData.marketName}: Removed";
         }
-        else if (targetCompany.value >= maxValue)
-        {
-            Debug.Log($"Company {targetCompany.companyType} has reached {maxValue}. Checking for win/loss conditions.");
-            // Verifica vittoria o sconfitta
-            GameManager.Instance.CheckGameState(); // Assumendo che il GameManager abbia un singleton
-        }
+        // Logica per gestire la rimozione del mercato (ad es. rimuovere le persone dalla fila)
     }
 
-    // Rimuove un'azienda che ha raggiunto il valore minimo
-    private void RemoveCompany(CompanyType companyType)
+    // Metodo per aggiornare tutti i mercati nella UI (ad esempio all'inizio del gioco)
+    public void UpdateAllMarketsUI()
     {
-        companies.RemoveAll(c => c.companyType == companyType);
-        UpdateCompanyUI();
-
-        // Notifica al GameManager o ad altre classi che l'azienda è stata rimossa
-        GameManager.Instance.OnCompanyRemoved(companyType); // Funzione che gestisce la rimozione nel GameManager
-    }
-
-    // Ritorna la lista di aziende attive
-    public List<CompanyType> GetActiveCompanies()
-    {
-        return companies.ConvertAll(c => c.companyType);
+        
     }
 }

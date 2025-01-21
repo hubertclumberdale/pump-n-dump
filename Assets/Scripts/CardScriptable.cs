@@ -7,5 +7,5 @@ public class CardScriptable : ScriptableObject
     public CompanyType targetCompany;
     public int bonusValue;
     public int malusValue;
-    public CardEffectType effectType; // Vedi CardEffectType sotto
+    public CardEffectType effectType;
 }
