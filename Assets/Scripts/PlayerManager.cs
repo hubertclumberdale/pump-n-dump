@@ -12,7 +12,7 @@ public class PlayerManager : MonoBehaviour
         DrawInitialHand();
     }
 
-    void DrawInitialHand()
+    public void DrawInitialHand()
     {
         for (int i = 0; i < maxHandSize; i++)
         {

@@ -68,7 +68,7 @@ public class MarketManager : MonoBehaviour
     }
 
     // Metodo per rimuovere un mercato dalla lista attiva (quando raggiunge 0)
-    private void RemoveMarket(Market market)
+    public void RemoveMarket(Market market)
     {
         markets.Remove(market);
         if (market.marketUIText != null)

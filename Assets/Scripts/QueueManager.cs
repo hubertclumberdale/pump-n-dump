@@ -60,7 +60,7 @@ public class QueueManager : MonoBehaviour
     }
 
     // Rimuove tutte le persone associate a un'azienda specifica
-    public void RemoveCustomersByCompany(CompanyType company)
+    /* public void RemoveCustomersByCompany(CompanyType company)
     {
         Queue<CustomerClass> newQueue = new Queue<CustomerClass>();
 
@@ -77,5 +77,5 @@ public class QueueManager : MonoBehaviour
         }
 
         customerQueue = newQueue;
-    }
+    } */
 }

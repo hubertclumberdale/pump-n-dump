@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class CardClass : MonoBehaviour
 {
-    private CardScriptable cardData;
+    public CardScriptable cardData;
 
     public void Initialize(CardScriptable data)
     {
@@ -11,18 +11,36 @@ public class CardClass : MonoBehaviour
 
     public void Play(CustomerClass targetCustomer)
     {
-        // Logica per applicare l'effetto della carta
-        switch (cardData.effectType)
+        if (cardData.valueForTarget != 0)
         {
-            case CardEffectType.Plus:
-                targetCustomer.ApplyEffect(cardData.bonusValue);
-                break;
-            case CardEffectType.Leave:
-                targetCustomer.ApplyEffect(-cardData.malusValue);
-                break;
-            // Altri casi per altri tipi di effetti
+            
+            // targetCustomer.Company.ApplyValue(cardData.valueForTarget);
         }
 
-        Debug.Log($"Played {cardData.cardName} on {targetCustomer.customerName}");
+        if (cardData.affectsAllOtherMarketsToo)
+        {
+            // MarketManager.Instance.ApplyValueToAllMarkets(cardData.valueForOthers);
+        }
+
+        // Apply shuffle, remove, or move effects based on the flags in CardScriptable
+        if (cardData.shuffleQueue)
+        {
+            // QueueManager.Instance.ShuffleQueue();
+        }
+
+        if (cardData.shuffleHand)
+        {
+            // HandManager.Instance.ShuffleHand();
+        }
+
+        if (cardData.removesCopFromQueue)
+        {
+            // QueueManager.Instance.RemoveCopFromQueue();
+        }
+
+        if (cardData.movesCopToEndOfQueue)
+        {
+            // QueueManager.Instance.MoveCopToEndOfQueue();
+        }
     }
 }

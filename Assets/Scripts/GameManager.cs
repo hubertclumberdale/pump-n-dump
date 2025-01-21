@@ -55,11 +55,11 @@ public class GameManager : MonoBehaviour
             {
                 Debug.Log($"{market.marketData.marketName} has reached 0 and is out of the game.");
                 marketManager.RemoveMarket(market);
-                queueManager.RemoveCustomersByCompany(market.marketData.company);
+                //queueManager.RemoveCustomersByCompany(market.marketData.company);
             }
             else if (market.marketValue == 100)
             {
-                if (market.marketData.company == playerManager.assignedCompany)
+                /* if (market.marketData.company == playerManager.assignedCompany)
                 {
                     Debug.Log("You win!");
                     EndGame(true);
@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
                 {
                     Debug.Log("You lose!");
                     EndGame(false);
-                }
+                } */
             }
         }
     }
