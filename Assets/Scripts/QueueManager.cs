@@ -15,6 +15,13 @@ public class QueueManager : MonoBehaviour
     public Transform exitPosition; // Add this field for the exit point
     private CustomerClass currentPlayingCustomer; // Track customer at play position
     private bool isQueueInitialized = false;
+    private bool customerAtPlayPosition = false; // Add this flag
+
+    public float moveToPlayDuration = 0.8f; // Adjusted duration for moving to play position
+    public float moveToExitDuration = 0.8f; // Adjusted duration for moving to exit
+    public int jumpCount = 3; // Number of jumps during movement
+    public float jumpHeight = 0.1f; // Reduced height for smaller jumps
+    public int jumpsPerSecond = 4; // New variable to control jump frequency
 
     void Start()
     {
@@ -27,11 +34,11 @@ public class QueueManager : MonoBehaviour
     {
         if (!isQueueInitialized) return;  // Skip if queue isn't initialized yet
 
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) && currentPlayingCustomer == null) // Only allow if play position is empty
         {
             StartCoroutine(MoveCustomerToPlayPosition());
         }
-        else if (Input.GetKeyDown(KeyCode.S) && currentPlayingCustomer != null)
+        else if (Input.GetKeyDown(KeyCode.S) && customerAtPlayPosition) // Changed condition
         {
             StartCoroutine(HandleCustomerExit());
         }
@@ -86,28 +93,49 @@ public class QueueManager : MonoBehaviour
 
     public IEnumerator MoveCustomerToPlayPosition() // Renamed back from MoveCustomerToCombatPosition
     {
-        if (customerQueue.Count > 0)
+        if (customerQueue.Count > 0 && currentPlayingCustomer == null) // Double check that position is empty
         {
             CustomerClass customer = customerQueue.Dequeue();
             currentPlayingCustomer = customer; // Store reference
             
-            // Move customer to play position
-            yield return customer.transform.DOMove(playPosition.position, animationDuration)
-                .SetEase(Ease.InOutQuad)
-                .WaitForCompletion();
+            Sequence moveSequence = DOTween.Sequence();
+            
+            // Base movement
+            moveSequence.Append(customer.transform.DOMove(playPosition.position, moveToPlayDuration)
+                .SetEase(Ease.Linear));
+            
+            // Calculate total jumps based on duration and frequency
+            int totalJumps = Mathf.FloorToInt(moveToPlayDuration * jumpsPerSecond);
+            float jumpDuration = moveToPlayDuration / totalJumps;
 
+            // Add rapid small jumps
+            for (int i = 0; i < totalJumps; i++)
+            {
+                moveSequence.Join(customer.transform.DOMoveY(
+                    customer.transform.position.y + jumpHeight,
+                    jumpDuration * 0.5f)
+                    .SetLoops(2, LoopType.Yoyo)
+                    .SetEase(Ease.OutQuad)
+                    .SetDelay(i * jumpDuration));
+            }
+
+            yield return moveSequence.WaitForCompletion();
+            customerAtPlayPosition = true; // Set flag when customer reaches play position
+            AddRandomCustomerToQueue();
             // Advance the remaining queue
             yield return AdvanceQueue();
 
             // Add new customer at the end
-            AddRandomCustomerToQueue();
+            
         }
+        yield break; // Added to handle case when conditions aren't met
     }
 
     private IEnumerator HandleCustomerExit()
     {
         CustomerClass customerToExit = currentPlayingCustomer;
         currentPlayingCustomer = null;
+        customerAtPlayPosition = false; // Reset flag when customer starts exiting
 
         // First wait for current customer to exit completely
         yield return StartCoroutine(MoveCustomerToExit(customerToExit));
@@ -118,12 +146,28 @@ public class QueueManager : MonoBehaviour
 
     public IEnumerator MoveCustomerToExit(CustomerClass customer)
     {
-        // Move customer to exit position
-        yield return customer.transform.DOMove(exitPosition.position, animationDuration)
-            .SetEase(Ease.InOutQuad)
-            .WaitForCompletion();
+        Sequence exitSequence = DOTween.Sequence();
+        
+        // Base movement
+        exitSequence.Append(customer.transform.DOMove(exitPosition.position, moveToExitDuration)
+            .SetEase(Ease.Linear));
             
-        // Destroy the customer object after reaching exit
+        // Calculate total jumps based on duration and frequency
+        int totalJumps = Mathf.FloorToInt(moveToExitDuration * jumpsPerSecond);
+        float jumpDuration = moveToExitDuration / totalJumps;
+
+        // Add rapid small jumps
+        for (int i = 0; i < totalJumps; i++)
+        {
+            exitSequence.Join(customer.transform.DOMoveY(
+                customer.transform.position.y + jumpHeight,
+                jumpDuration * 0.5f)
+                .SetLoops(2, LoopType.Yoyo)
+                .SetEase(Ease.OutQuad)
+                .SetDelay(i * jumpDuration));
+        }
+
+        yield return exitSequence.WaitForCompletion();
         Destroy(customer.gameObject);
     }
 }
