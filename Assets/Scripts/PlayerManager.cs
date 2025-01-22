@@ -1,45 +1,83 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;  // Add DOTween namespace
 
 public class PlayerManager : MonoBehaviour
 {
+    public static PlayerManager Instance { get; private set; }
     public List<CardClass> hand;
-    public DeckManager deckManager;
+    public Transform[] handPositions = new Transform[3];  // Array of positions for cards
     public int maxHandSize = 3;
+    private int currentDrawIndex = 0;
+    private bool isDrawing = false;
+    public Transform playedCardPosition; // Add this field
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            hand = new List<CardClass>();
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     void Start()
     {
-        DrawInitialHand();
+        if (handPositions == null || handPositions.Length < maxHandSize)
+        {
+            Debug.LogError("Hand positions not properly set in PlayerManager!");
+            return;
+        }
+
+        if (DeckManager.Instance == null)
+        {
+            Debug.LogError("DeckManager instance not found!");
+            return;
+        }
+
+        StartCoroutine(DrawInitialHandCoroutine());
     }
 
-    public void DrawInitialHand()
+    private IEnumerator DrawInitialHandCoroutine()
     {
         for (int i = 0; i < maxHandSize; i++)
         {
-            DrawCard();
+            yield return StartCoroutine(DrawCardCoroutine());
+        }
+    }
+
+    private IEnumerator DrawCardCoroutine()
+    {
+        if (hand.Count < maxHandSize && DeckManager.Instance != null)
+        {
+            CardClass newCard = DeckManager.Instance.DrawCard(handPositions[hand.Count]);
+            if (newCard != null)
+            {
+                int handIndex = hand.Count;
+                newCard.SetHandIndex(handIndex);
+                hand.Add(newCard);
+                yield return new WaitForSeconds(DeckManager.Instance.drawAnimationDuration);
+            }
         }
     }
 
     public void DrawCard()
     {
-        if (hand.Count < maxHandSize)
-        {
-            /* CardClass newCard = deckManager.DrawCard();
-            if (newCard != null)
-            {
-                hand.Add(newCard);
-                // Aggiorna l'UI qui se necessario
-            } */
-        }
+        StartCoroutine(DrawCardCoroutine());
     }
 
-    public void PlayCard(int cardIndex, CustomerClass targetCustomer)
+    public void PlayCard(int cardIndex)
     {
         if (cardIndex >= 0 && cardIndex < hand.Count)
         {
             CardClass cardToPlay = hand[cardIndex];
-            cardToPlay.Play(targetCustomer);
             hand.RemoveAt(cardIndex);
+            cardToPlay.Play(playedCardPosition);
             DrawCard();
         }
     }

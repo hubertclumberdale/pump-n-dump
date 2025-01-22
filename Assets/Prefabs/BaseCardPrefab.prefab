@@ -347,6 +347,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardData: {fileID: 11400000, guid: 23b5b2cbc439e4429b47755c7705a204, type: 2}
+  cardButton: {fileID: 8179424869382558575}
 --- !u!1 &7901364836456617480
 GameObject:
   m_ObjectHideFlags: 0

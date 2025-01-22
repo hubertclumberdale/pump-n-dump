@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
     // Inizia la partita
     public void StartGame()
     {
-        playerManager.DrawInitialHand();
+        /* playerManager.DrawInitialHand(); */
         StartTurn();
     }
 

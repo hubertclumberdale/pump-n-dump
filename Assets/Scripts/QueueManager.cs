@@ -13,7 +13,7 @@ public class QueueManager : MonoBehaviour
     public Transform spawnPoint; // Fixed missing semicolon
     public Transform playPosition; // Renamed back from combatPosition
     public Transform exitPosition; // Add this field for the exit point
-    private CustomerClass currentPlayingCustomer; // Track customer at play position
+    public CustomerClass currentPlayingCustomer; // Track customer at play position
     private bool isQueueInitialized = false;
     private bool customerAtPlayPosition = false; // Add this flag
 
@@ -145,17 +145,20 @@ public class QueueManager : MonoBehaviour
         yield break; // Added to handle case when conditions aren't met
     }
 
-    private IEnumerator HandleCustomerExit()
+    public IEnumerator HandleCustomerExit()
     {
-        CustomerClass customerToExit = currentPlayingCustomer;
-        currentPlayingCustomer = null;
-        customerAtPlayPosition = false; // Reset flag when customer starts exiting
+        if (currentPlayingCustomer != null)
+        {
+            CustomerClass customerToExit = currentPlayingCustomer;
+            currentPlayingCustomer = null;
+            customerAtPlayPosition = false;
 
-        // First wait for current customer to exit completely
-        yield return StartCoroutine(MoveCustomerToExit(customerToExit));
+            // First wait for current customer to exit completely
+            yield return StartCoroutine(MoveCustomerToExit(customerToExit));
 
-        // Only after exit is complete, move the next customer
-        yield return StartCoroutine(MoveCustomerToPlayPosition());
+            // Only after exit is complete, move the next customer
+            yield return StartCoroutine(MoveCustomerToPlayPosition());
+        }
     }
 
     public IEnumerator MoveCustomerToExit(CustomerClass customer)

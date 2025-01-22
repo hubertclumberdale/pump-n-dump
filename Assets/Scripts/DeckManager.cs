@@ -12,19 +12,25 @@ public class DeckManager : MonoBehaviour
     public float drawAnimationDuration = 0.5f; // Duration of draw animation
     private Stack<CardClass> deck; // Changed from Queue to Stack
 
-    void Start()
+    void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
+            deck = new Stack<CardClass>();
         }
         else
         {
             Destroy(gameObject);
-            return;
         }
-        
-        GenerateDeck();
+    }
+
+    void Start()
+    {
+        if (Instance == this)
+        {
+            GenerateDeck();
+        }
     }
 
     // Genera il mazzo all'inizio del gioco
@@ -53,10 +59,9 @@ public class DeckManager : MonoBehaviour
     {
         if (deck.Count > 0)
         {
-            CardClass drawnCard = deck.Pop(); // Changed from Dequeue to Pop
+            CardClass drawnCard = deck.Pop();
             drawnCard.transform.DOMove(handPosition.position, drawAnimationDuration)
                     .SetEase(Ease.OutQuad);
-
             return drawnCard;
         }
         else
