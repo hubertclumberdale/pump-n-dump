@@ -14,6 +14,7 @@ public class QueueManager : MonoBehaviour
     public Transform playPosition; // Renamed back from combatPosition
     public Transform exitPosition; // Add this field for the exit point
     private CustomerClass currentPlayingCustomer; // Track customer at play position
+    private bool isQueueInitialized = false;
 
     void Start()
     {
@@ -24,6 +25,8 @@ public class QueueManager : MonoBehaviour
 
     void Update()
     {
+        if (!isQueueInitialized) return;  // Skip if queue isn't initialized yet
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             StartCoroutine(MoveCustomerToPlayPosition());
@@ -38,12 +41,15 @@ public class QueueManager : MonoBehaviour
     IEnumerator InitializeQueue()
     {
         customerQueue = new Queue<CustomerClass>();
+        isQueueInitialized = false;  // Make sure it's false at start
 
         for (int i = 0; i < queueSize; i++)
         {
             AddRandomCustomerToQueue();
             yield return AdvanceQueue();
         }
+
+        isQueueInitialized = true;  // Queue is now fully initialized
     }
 
     // Aggiunge una persona casuale alla fine della fila
@@ -57,18 +63,24 @@ public class QueueManager : MonoBehaviour
     // Avanza la fila di una posizione
     public IEnumerator AdvanceQueue()
     {
-        foreach (CustomerClass customer in customerQueue)
+        // Convert queue to array to avoid modification issues during iteration
+        CustomerClass[] customersToMove = customerQueue.ToArray();
+        
+        foreach (CustomerClass customer in customersToMove)
         {
-            Vector3 currentPos = customer.transform.position;
-            Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f);
+            if (customer != null && customer.gameObject != null)  // Add null check for safety
+            {
+                Vector3 currentPos = customer.transform.position;
+                Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f);
 
-            Sequence moveSequence = DOTween.Sequence();
-            moveSequence.Append(customer.transform.DOMove(targetPos, animationDuration))
-                       .Join(customer.transform.DOMoveY(currentPos.y + 0.1f, animationDuration * 0.5f)
-                            .SetEase(Ease.OutQuad)
-                            .SetLoops(2, LoopType.Yoyo));
+                Sequence moveSequence = DOTween.Sequence();
+                moveSequence.Append(customer.transform.DOMove(targetPos, animationDuration))
+                           .Join(customer.transform.DOMoveY(currentPos.y + 0.1f, animationDuration * 0.5f)
+                                .SetEase(Ease.OutQuad)
+                                .SetLoops(2, LoopType.Yoyo));
 
-            yield return moveSequence.WaitForCompletion();
+                yield return moveSequence.WaitForCompletion();
+            }
         }
     }
 
@@ -97,11 +109,11 @@ public class QueueManager : MonoBehaviour
         CustomerClass customerToExit = currentPlayingCustomer;
         currentPlayingCustomer = null;
 
-        // Start moving next customer to play position
-        StartCoroutine(MoveCustomerToPlayPosition());
-
-        // Move current customer to exit
+        // First wait for current customer to exit completely
         yield return StartCoroutine(MoveCustomerToExit(customerToExit));
+
+        // Only after exit is complete, move the next customer
+        yield return StartCoroutine(MoveCustomerToPlayPosition());
     }
 
     public IEnumerator MoveCustomerToExit(CustomerClass customer)
