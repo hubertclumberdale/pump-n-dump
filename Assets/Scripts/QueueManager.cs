@@ -11,12 +11,27 @@ public class QueueManager : MonoBehaviour
     public float animationDuration = 0.3f; // Durata dell'animazione
     public static QueueManager Instance; // Singleton
     public Transform spawnPoint; // Fixed missing semicolon
+    public Transform playPosition; // Renamed back from combatPosition
+    public Transform exitPosition; // Add this field for the exit point
+    private CustomerClass currentPlayingCustomer; // Track customer at play position
 
     void Start()
     {
         Instance = this;
 
         StartCoroutine(InitializeQueue());
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.A))
+        {
+            StartCoroutine(MoveCustomerToPlayPosition());
+        }
+        else if (Input.GetKeyDown(KeyCode.S) && currentPlayingCustomer != null)
+        {
+            StartCoroutine(HandleCustomerExit());
+        }
     }
 
     // Inizializza la fila con persone casuali
@@ -45,10 +60,58 @@ public class QueueManager : MonoBehaviour
         foreach (CustomerClass customer in customerQueue)
         {
             Vector3 currentPos = customer.transform.position;
-            Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f); // Single diagonal step
+            Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f);
 
-            yield return customer.transform.DOMove(targetPos, animationDuration)
-                .SetEase(Ease.InOutQuad).WaitForCompletion();
+            Sequence moveSequence = DOTween.Sequence();
+            moveSequence.Append(customer.transform.DOMove(targetPos, animationDuration))
+                       .Join(customer.transform.DOMoveY(currentPos.y + 0.1f, animationDuration * 0.5f)
+                            .SetEase(Ease.OutQuad)
+                            .SetLoops(2, LoopType.Yoyo));
+
+            yield return moveSequence.WaitForCompletion();
         }
+    }
+
+    public IEnumerator MoveCustomerToPlayPosition() // Renamed back from MoveCustomerToCombatPosition
+    {
+        if (customerQueue.Count > 0)
+        {
+            CustomerClass customer = customerQueue.Dequeue();
+            currentPlayingCustomer = customer; // Store reference
+            
+            // Move customer to play position
+            yield return customer.transform.DOMove(playPosition.position, animationDuration)
+                .SetEase(Ease.InOutQuad)
+                .WaitForCompletion();
+
+            // Advance the remaining queue
+            yield return AdvanceQueue();
+
+            // Add new customer at the end
+            AddRandomCustomerToQueue();
+        }
+    }
+
+    private IEnumerator HandleCustomerExit()
+    {
+        CustomerClass customerToExit = currentPlayingCustomer;
+        currentPlayingCustomer = null;
+
+        // Start moving next customer to play position
+        StartCoroutine(MoveCustomerToPlayPosition());
+
+        // Move current customer to exit
+        yield return StartCoroutine(MoveCustomerToExit(customerToExit));
+    }
+
+    public IEnumerator MoveCustomerToExit(CustomerClass customer)
+    {
+        // Move customer to exit position
+        yield return customer.transform.DOMove(exitPosition.position, animationDuration)
+            .SetEase(Ease.InOutQuad)
+            .WaitForCompletion();
+            
+        // Destroy the customer object after reaching exit
+        Destroy(customer.gameObject);
     }
 }
