@@ -1,81 +1,54 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class QueueManager : MonoBehaviour
 {
     public Queue<CustomerClass> customerQueue; // La fila di persone
     public int queueSize = 10; // Dimensione della fila
-    public List<CustomerClass> customerTemplates; // Template delle persone associate alle aziende
+    public GameObject customerPrefab; // Prefab del cliente
+    public float animationDuration = 0.3f; // Durata dell'animazione
+    public static QueueManager Instance; // Singleton
+    public Transform spawnPoint; // Fixed missing semicolon
 
     void Start()
     {
-        InitializeQueue();
+        Instance = this;
+
+        StartCoroutine(InitializeQueue());
     }
 
     // Inizializza la fila con persone casuali
-    void InitializeQueue()
+    IEnumerator InitializeQueue()
     {
         customerQueue = new Queue<CustomerClass>();
 
         for (int i = 0; i < queueSize; i++)
         {
             AddRandomCustomerToQueue();
+            yield return AdvanceQueue();
         }
     }
 
     // Aggiunge una persona casuale alla fine della fila
     void AddRandomCustomerToQueue()
     {
-        int randomIndex = Random.Range(0, customerTemplates.Count);
-        CustomerClass newCustomer = Instantiate(customerTemplates[randomIndex]);
+        GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+        CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
         customerQueue.Enqueue(newCustomer);
     }
 
-    // Rimuove la persona in testa alla fila e aggiunge una nuova persona alla fine
-    public void AdvanceQueue()
+    // Avanza la fila di una posizione
+    public IEnumerator AdvanceQueue()
     {
-        if (customerQueue.Count > 0)
-        {
-            CustomerClass frontCustomer = customerQueue.Dequeue();
-            Destroy(frontCustomer.gameObject);
-            AddRandomCustomerToQueue();
-        }
-    }
-
-    // Restituisce la persona in testa alla fila
-    public CustomerClass GetFrontCustomer()
-    {
-        if (customerQueue.Count > 0)
-        {
-            return customerQueue.Peek();
-        }
-        return null;
-    }
-
-    // Restituisce la lista delle prossime persone nella fila
-    public List<CustomerClass> GetNextCustomers(int count)
-    {
-        List<CustomerClass> nextCustomers = new List<CustomerClass>(customerQueue);
-        return nextCustomers.GetRange(1, Mathf.Min(count, nextCustomers.Count - 1));
-    }
-
-    // Rimuove tutte le persone associate a un'azienda specifica
-    /* public void RemoveCustomersByCompany(CompanyType company)
-    {
-        Queue<CustomerClass> newQueue = new Queue<CustomerClass>();
-
         foreach (CustomerClass customer in customerQueue)
         {
-            if (customer.market.company != company)
-            {
-                newQueue.Enqueue(customer);
-            }
-            else
-            {
-                Destroy(customer.gameObject);
-            }
-        }
+            Vector3 currentPos = customer.transform.position;
+            Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f); // Single diagonal step
 
-        customerQueue = newQueue;
-    } */
+            yield return customer.transform.DOMove(targetPos, animationDuration)
+                .SetEase(Ease.InOutQuad).WaitForCompletion();
+        }
+    }
 }

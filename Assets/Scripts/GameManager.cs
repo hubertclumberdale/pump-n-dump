@@ -4,7 +4,6 @@ using System.Collections.Generic;
 public class GameManager : MonoBehaviour
 {
     public PlayerManager playerManager;
-    public QueueManager queueManager;
     public MarketManager marketManager;
     public bool canPlay = true;
 
@@ -28,7 +27,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        queueManager.AdvanceQueue();
+        QueueManager.Instance.AdvanceQueue();
         CheckGameState();
         canPlay = true;
     }
