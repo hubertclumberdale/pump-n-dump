@@ -1,69 +1,70 @@
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;  // Add DOTween namespace
 
 public class DeckManager : MonoBehaviour
 {
-    public List<CardScriptable> cardTemplates; // Lista di tutte le carte possibili
+    public static DeckManager Instance { get; private set; }
+    public GameObject cardPrefab; // Changed from List to single prefab
     public int initialDeckSize = 30; // Dimensione iniziale del deck
-    private Queue<CardScriptable> deck; // Coda che rappresenta il mazzo
+    public Transform deckPosition; // Position where deck is stacked
+    public float cardSpacing = 0.01f; // Vertical spacing between cards
+    public float drawAnimationDuration = 0.5f; // Duration of draw animation
+    private Stack<CardClass> deck; // Changed from Queue to Stack
 
     void Start()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         GenerateDeck();
     }
 
     // Genera il mazzo all'inizio del gioco
     private void GenerateDeck()
     {
-        deck = new Queue<CardScriptable>();
-
-        List<CardScriptable> shuffledDeck = new List<CardScriptable>();
+        deck = new Stack<CardClass>();
+        Vector3 currentPosition = deckPosition.position;
+        Quaternion faceDownRotation = Quaternion.Euler(0, 0, 180);
 
         for (int i = 0; i < initialDeckSize; i++)
         {
-            int randomIndex = Random.Range(0, cardTemplates.Count);
-            shuffledDeck.Add(cardTemplates[randomIndex]);
-        }
-
-        // Mescola le carte
-        for (int i = shuffledDeck.Count - 1; i > 0; i--)
-        {
-            int randomIndex = Random.Range(0, i + 1);
-            CardScriptable temp = shuffledDeck[i];
-            shuffledDeck[i] = shuffledDeck[randomIndex];
-            shuffledDeck[randomIndex] = temp;
-        }
-
-        foreach (var card in shuffledDeck)
-        {
-            deck.Enqueue(card);
+            GameObject cardObject = Instantiate(cardPrefab, currentPosition, faceDownRotation);
+            CardClass cardClass = cardObject.GetComponent<CardClass>();
+            if (cardClass == null)
+            {
+                Debug.LogError("Card prefab is missing CardClass component!");
+                continue;
+            }
+            deck.Push(cardClass); // Changed from Enqueue to Push
+            currentPosition += Vector3.up * cardSpacing;
         }
     }
 
-    // Pesca una carta dal mazzo e crea un'istanza
-    public CardClass DrawCard()
+    // Updated draw method with position parameter and animation
+    public CardClass DrawCard(Transform handPosition)
     {
         if (deck.Count > 0)
         {
-            CardScriptable cardData = deck.Dequeue();
-            return CreateCardInstance(cardData);
+            CardClass drawnCard = deck.Pop(); // Changed from Dequeue to Pop
+            drawnCard.transform.DOMove(handPosition.position, drawAnimationDuration)
+                    .SetEase(Ease.OutQuad);
+
+            return drawnCard;
         }
         else
         {
             Debug.Log("Deck is empty! Generating a new deck.");
             GenerateDeck();
-            CardScriptable cardData = deck.Dequeue();
-            return CreateCardInstance(cardData);
+            return DrawCard(handPosition);
         }
-    }
-
-    // Metodo per creare un'istanza della carta
-    private CardClass CreateCardInstance(CardScriptable cardData)
-    {
-        GameObject cardObject = new GameObject(cardData.cardName);
-        CardClass cardClass = cardObject.AddComponent<CardClass>();
-        cardClass.Initialize(cardData);
-        return cardClass;
     }
 
     // Restituisce il numero di carte rimanenti nel mazzo

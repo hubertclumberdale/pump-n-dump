@@ -23,10 +23,20 @@ public class QueueManager : MonoBehaviour
     public float jumpHeight = 0.1f; // Reduced height for smaller jumps
     public int jumpsPerSecond = 4; // New variable to control jump frequency
 
+    public Transform handPosition;
+
     void Start()
     {
-        Instance = this;
-
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
         StartCoroutine(InitializeQueue());
     }
 
@@ -38,9 +48,13 @@ public class QueueManager : MonoBehaviour
         {
             StartCoroutine(MoveCustomerToPlayPosition());
         }
-        else if (Input.GetKeyDown(KeyCode.S) && customerAtPlayPosition) // Changed condition
+        if (Input.GetKeyDown(KeyCode.S) && customerAtPlayPosition) // Changed condition
         {
             StartCoroutine(HandleCustomerExit());
+        }
+        if (Input.GetKeyDown(KeyCode.D)) // Added condition check
+        {
+            DeckManager.Instance.DrawCard(handPosition);
         }
     }
 

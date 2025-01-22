@@ -24,12 +24,12 @@ public class PlayerManager : MonoBehaviour
     {
         if (hand.Count < maxHandSize)
         {
-            CardClass newCard = deckManager.DrawCard();
+            /* CardClass newCard = deckManager.DrawCard();
             if (newCard != null)
             {
                 hand.Add(newCard);
                 // Aggiorna l'UI qui se necessario
-            }
+            } */
         }
     }
 
