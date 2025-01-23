@@ -1,177 +1,73 @@
-# Pump & Dump
-Pump & Dump
-
-ITA:
-
-Descrizione del Gioco
-
-In questo gioco, il giocatore assume il ruolo di un manager che interagisce con una fila infinita di persone, ognuna associata a una delle quattro aziende in concorrenza. Ogni azienda ha un valore che può variare da 0 a 100, e lo scopo del gioco è portare il valore dell’azienda assegnata al giocatore fino a 100. Se ci riesci, vinci! Tuttavia, ci sono delle condizioni che potrebbero farti perdere.
+Descrizione Generale del Gioco
+Il gioco mette il giocatore al centro di una sfida strategica per portare la propria azienda a 100 punti di valore, interagendo con una fila di persone che rappresentano diverse aziende in competizione. Ogni turno, il giocatore utilizza carte per influenzare il valore delle aziende e deve anche evitare un pericoloso personaggio speciale, lo Sbirro, che può apparire in fondo alla fila.
 
 Obiettivo del Gioco
+Portare il valore dell'azienda assegnata al giocatore a 100 punti per vincere la partita.
+Evitare condizioni di sconfitta, che includono lo Sbirro e i valori delle aziende.
+Condizioni di Vittoria:
+L'azienda del giocatore raggiunge 100 punti.
+Condizioni di Sconfitta:
+L'azienda assegnata al giocatore scende a 0 punti.
+Un'altra azienda (non del giocatore) raggiunge 100 punti.
+Lo Sbirro arriva alla posizione del giocatore nella fila.
+Un’azienda (diversa da quella del giocatore) scende a 0 punti, causando la sua rimozione dal gioco. Se ciò rende impossibile raggiungere la vittoria, il giocatore perde.
+Setup del Gioco
+Aziende: Ci sono 4 aziende (A, B, C, D), ognuna con un valore iniziale di 20 punti.
+Assegnazione al giocatore: All'inizio del gioco, al giocatore viene assegnata casualmente una delle 4 aziende. Questa sarà l'azienda che il giocatore deve portare a 100 punti.
+Fila iniziale: Una fila di 9 persone viene generata casualmente, ognuna appartenente a una delle 4 aziende.
+Nota: Lo Sbirro non può essere presente fra le prime 9 persone della fila iniziale.
+Carte iniziali: Il giocatore inizia con 3 carte casuali pescate dal mazzo.
+Lo Sbirro
+Lo Sbirro è un personaggio speciale che rappresenta una minaccia diretta al giocatore.
 
-L’obiettivo è influenzare i valori delle aziende tramite l’interazione con le persone nella fila e l’uso strategico delle carte, cercando di portare il valore dell’azienda assegnata al giocatore fino a 100. Tuttavia, ci sono anche delle condizioni di perdita:
-	•	Se l’azienda del giocatore raggiunge 0, il giocatore perde.
-	•	Se un’altra azienda (che non è quella del giocatore) arriva a 100, il giocatore perde.
-	•	Se un’azienda raggiunge 0, tutte le persone appartenenti a quell’azienda scompaiono dalla fila e l’azienda non appare più nei turni successivi.
+Probabilità di apparizione: Dopo il setup iniziale, ad ogni turno c'è una probabilità del 5% che lo Sbirro venga aggiunto in fondo alla fila.
+Comportamento: Lo Sbirro avanza nella fila come un normale cliente. Se lo Sbirro raggiunge la posizione del giocatore, la partita termina immediatamente con una sconfitta.
+Gestione dello Sbirro:
+Il giocatore può manipolare la fila o usare carte per spostare o rimuovere lo Sbirro.
+Carte come Freq o Shuffle possono randomizzare la fila, spostando lo Sbirro lontano dal giocatore.
+Turni e Fila
+Struttura di un Turno:
+Aggiornamento della Fila:
 
-Inizio del Gioco
+La persona davanti nella fila interagisce con il giocatore (e viene rimossa).
+Una nuova persona casuale (A, B, C o D) viene aggiunta in fondo alla fila, con una probabilità del 5% che sia lo Sbirro.
+Se un’azienda è stata eliminata (perché ha raggiunto 0 punti), le persone associate a quell’azienda non appariranno più nella fila.
+Pesca di una Carta:
 
-All’inizio della partita, il giocatore riceve una delle 4 aziende in modo casuale. Quella sarà l’azienda che dovrà cercare di portare a 100.
-	•	Se l’azienda assegnata al giocatore raggiunge 100, il giocatore vince.
-	•	Se l’azienda assegnata al giocatore raggiunge 0, il giocatore perde.
+Il giocatore riceve una carta casuale dal mazzo, avendo sempre 3 carte in mano all'inizio di ogni turno.
+Giocare una Carta:
 
-Aziende e Persone
+Il giocatore sceglie una delle 3 carte in mano e applica il suo effetto sulla persona che ha davanti nella fila. L’effetto influenzerà il valore dell’azienda associata a quella persona (o più aziende, a seconda della carta).
+Carte del Mazzo
+Ecco tutte le carte disponibili nel mazzo e i loro effetti:
 
-Ci sono 4 aziende nel gioco, contrassegnate da A, B, C e D.
-Ogni persona nella fila è associata a una delle 4 aziende. Il giocatore sa a quale azienda appartiene la persona che ha davanti e anche l’ordine delle prossime 9 persone.
+Plus: Aumenta il valore dell'azienda della persona davanti di +5.
+Freq: Conta la frequenza delle aziende nelle prossime 9 persone nella fila. Applica un bonus di +10 all'azienda più numerosa e un malus di -10 all'azienda meno numerosa. Dopo l’effetto, la fila viene randomizzata.
+Shuffle: Rimescola le carte in mano del giocatore, randomizza la fila e applica un malus di -5 a tutte le aziende.
+Eggnow: Aumenta immediatamente di +5 il valore dell’azienda della persona davanti, ma applica un malus di -10 alla stessa azienda dopo 3 turni.
+Party: Aumenta di +5 il valore di tutte le aziende.
+Leech: Aumenta di +20 il valore dell’azienda della persona davanti, ma applica un malus di -5 a tutte le altre aziende.
+Fine della Partita
+La partita termina immediatamente quando si verifica una delle seguenti condizioni:
 
-Esempio di fila:
+Vittoria: L'azienda del giocatore raggiunge 100 punti.
+Sconfitta:
+L'azienda del giocatore scende a 0 punti.
+Un’altra azienda (non del giocatore) raggiunge 100 punti.
+Lo Sbirro raggiunge la posizione del giocatore nella fila.
+Un’azienda (diversa da quella del giocatore) scende a 0 punti, causando l’eliminazione di quell’azienda. Se ciò rende impossibile vincere, il giocatore perde.
+Strategie di Gioco
+Gestire lo Sbirro:
 
-[A, B, C, D, A, B, C, D, A, B]
-Ogni lettera rappresenta una persona associata all’azienda corrispondente.
+Usa Freq o Shuffle per spostare o randomizzare la fila.
+Pianifica in anticipo sfruttando la visione delle prossime 9 persone.
+Massimizzare l’azienda del giocatore:
 
-Quando un’azienda raggiunge 0, le persone associate a quell’azienda non appariranno più nella fila e quell’azienda scompare dalle statistiche.
+Usa carte come Plus, Party o Leech per aumentare rapidamente i valori.
+Fai attenzione agli effetti collaterali delle carte (ad esempio, Eggnow o Leech).
+Eliminare le aziende avversarie:
 
-Turni e Interazioni
+Usa carte con malus, come Shuffle, per abbassare i valori delle aziende concorrenti.
+Monitorare la fila:
 
-Ad ogni turno, il giocatore ha 3 carte in mano. Ogni carta è associata a una delle 4 aziende e, quando viene giocata, applica un effetto al valore dell’azienda della persona che il giocatore ha davanti.
-
-Come funziona un turno?
-	1.	Prima del Turno:
-	•	Il giocatore riceve una carta casuale dal mazzo, in modo da avere sempre 3 carte in mano.
-	2.	Durante il Turno:
-	•	Il giocatore può scegliere una delle carte dalla sua mano e giocarne una.
-	•	Il giocatore applica l’effetto della carta sulla persona che ha davanti nella fila, influenzando il valore dell’azienda della persona.
-	3.	Dopo il Turno:
-	•	La persona con cui il giocatore ha interagito viene rimossa dalla fila.
-	•	Una nuova persona, casualmente associata a una delle aziende rimanenti, viene aggiunta alla fine della fila.
-	4.	Prossimo Turno:
-	•	Si ripete il ciclo. La mano del giocatore viene aggiornata e la fila continua a muoversi.
-
-Se un’azienda raggiunge 0 durante il gioco, tutte le persone che appartenevano a quell’azienda non appariranno più nella fila, e l’azienda viene rimossa dal gioco.
-
-Carte nel Mazzo
-
-Il mazzo è composto da diverse carte, ognuna con un effetto specifico. Alcune carte influenzano direttamente l’azienda della persona che il giocatore ha davanti, mentre altre possono modificare la situazione delle altre aziende o persino cambiare la mano del giocatore.
-
-Lista delle Carte:
-	•	Plus: Aumenta il valore dell’azienda della persona davanti di +5.
-	•	Freq: Conta la frequenza delle aziende nelle prossime 9 persone della fila e applica un bonus di +10 all’azienda più numerosa e un malus di -10 all’azienda meno numerosa. Dopo l’effetto, la fila viene randomizzata.
-	•	Shuffle: Rimescola le carte in mano del giocatore e applica un malus di -5 a tutte le aziende.
-	•	Eggnow: Aumenta il valore dell’azienda della persona davanti di +5 immediatamente e applica un malus di -10 alla stessa azienda in 3 turni.
-	•	Party: Aumenta il valore di +5 a tutte le aziende.
-	•	Leech: Aumenta il valore dell’azienda della persona davanti di +20 e applica un malus di -5 a tutte le altre aziende.
-
-Strategia e Tattiche
-
-La strategia si concentra sulla gestione delle carte in mano e sulla scelta delle giuste azioni per influenzare al meglio le aziende. Il giocatore deve essere attento alla distribuzione delle aziende nella fila e alla sequenza degli effetti delle carte, cercando di far crescere il valore dell’azienda che desidera e ridurre il valore delle altre.
-
-Alcuni Suggerimenti:
-	•	Usa Freq per analizzare e manipolare la distribuzione delle aziende nella fila.
-	•	Usa Leech quando vuoi dare un grande vantaggio a una singola azienda, ma con un costo per le altre.
-	•	Shuffle è una mossa rischiosa che rimescola le carte, ma può offrire nuove combinazioni utili.
-
-Fine del Gioco
-
-Il gioco può finire in uno dei seguenti modi:
-	•	Vittoria:
-	•	Se l’azienda del giocatore raggiunge 100, il giocatore vince.
-	•	Perdita:
-	•	Se l’azienda del giocatore raggiunge 0.
-	•	Se un’altra azienda, diversa da quella del giocatore, raggiunge 100.
-
-Quando un’azienda raggiunge 0, le persone appartenenti a quella azienda non possono più apparire nella fila e l’azienda scompare dalle statistiche.
-
-In Sintesi
-	•	4 aziende (A, B, C, D) competono nel gioco.
-	•	Inizio del gioco: Il giocatore riceve una delle 4 aziende da gestire.
-	•	Ogni turno: Il giocatore gioca una carta e interagisce con una persona della fila.
-	•	Obiettivo: Portare il valore dell’azienda assegnata dal giocatore fino a 100 prima che si verifichino le condizioni di perdita.
-	•	Condizioni di Perdita: Il giocatore perde se la sua azienda raggiunge 0 o se un’altra azienda arriva a 100.
-
-    
-ENG:
-
-Game Description
-
-In this game, the player takes on the role of a manager interacting with an endless queue of people, each associated with one of four competing companies. Each company has a value ranging from 0 to 100, and the goal of the game is to raise the value of the company assigned to the player to 100. If you succeed, you win! However, there are conditions that could make you lose.
-
-Game Objective
-
-The goal is to influence the companies’ values by interacting with the people in the queue and strategically using cards to raise the value of the player’s assigned company to 100. However, there are loss conditions to watch out for:
-	•	If the player’s company reaches 0, the player loses.
-	•	If another company (not the player’s) reaches 100, the player loses.
-	•	If any company’s value reaches 0, all people associated with that company disappear from the queue, and the company will no longer appear in subsequent turns.
-
-Starting the Game
-
-At the beginning of the game, the player is randomly assigned one of the four companies. This company will be the one the player must try to raise to 100.
-	•	If the assigned company reaches 100, the player wins.
-	•	If the assigned company reaches 0, the player loses.
-
-Companies and People
-
-There are 4 companies in the game, identified as A, B, C, and D.
-Each person in the queue is associated with one of the 4 companies. The player can see which company the person at the front of the queue belongs to and also the order of the next 9 people in line.
-
-Example Queue:
-
-[A, B, C, D, A, B, C, D, A, B]
-Each letter represents a person associated with the corresponding company.
-
-If a company’s value reaches 0, all people associated with that company will no longer appear in the queue, and the company will be removed from the game’s statistics.
-
-Turns and Interactions
-
-Each turn, the player has 3 cards in hand. Each card is associated with one of the 4 companies and, when played, applies an effect to the value of the company linked to the person at the front of the queue.
-
-How Does a Turn Work?
-	1.	Before the Turn:
-	•	The player draws one random card from the deck, ensuring they always have 3 cards in hand.
-	2.	During the Turn:
-	•	The player chooses one of the cards in their hand to play.
-	•	The effect of the chosen card is applied to the person at the front of the queue, influencing the value of their associated company.
-	3.	After the Turn:
-	•	The person the player interacted with is removed from the queue.
-	•	A new person, randomly associated with one of the remaining companies, is added to the end of the queue.
-	4.	Next Turn:
-	•	The process repeats. The player’s hand is updated, and the queue continues to shift.
-
-If a company reaches 0 during the game, all people associated with that company disappear from the queue, and the company is removed from the game.
-
-Cards in the Deck
-
-The deck contains various cards, each with a specific effect. Some cards directly affect the company of the person at the front of the queue, while others influence other companies or even the player’s hand. Below is a list of available cards:
-	•	Plus: Increases the value of the company associated with the front person by +5.
-	•	Freq: Counts the frequency of companies in the next 9 people in the queue and applies a bonus of +10 to the most frequent company and a penalty of -10 to the least frequent company. Afterward, the queue is randomized.
-	•	Shuffle: Shuffles the cards in the player’s hand and applies a penalty of -5 to all companies.
-	•	Eggnow: Immediately increases the value of the company associated with the front person by +5 but applies a penalty of -10 to the same company after 3 turns.
-	•	Party: Increases the value of all companies by +5.
-	•	Leech: Increases the value of the company associated with the front person by +20 and applies a penalty of -5 to all other companies.
-
-Strategy and Tactics
-
-The strategy revolves around managing the cards in hand and choosing the right actions to best influence the companies. The player must pay attention to the distribution of companies in the queue and plan the sequence of card effects to maximize the value of their assigned company while lowering the value of others.
-
-Tips:
-	•	Use Freq to analyze and manipulate the distribution of companies in the queue.
-	•	Play Leech to give a significant boost to one company while balancing the cost to others.
-	•	Shuffle is risky but can reset your hand and offer new combinations of effects.
-
-End of the Game
-
-The game ends in one of the following ways:
-	•	Victory:
-	•	If the player’s company reaches 100, the player wins.
-	•	Loss:
-	•	If the player’s company reaches 0.
-	•	If another company (not the player’s) reaches 100.
-
-When a company reaches 0, the people associated with it disappear from the queue, and the company is removed from the game’s statistics.
-
-Summary:
-	•	4 companies (A, B, C, D) compete in the game.
-	•	Starting the game: The player is randomly assigned one company to manage.
-	•	Each turn: The player plays a card and interacts with a person in the queue.
-	•	Objective: Bring the value of the player’s assigned company to 100 before any loss conditions are met (player’s company reaches 0 or another company reaches 100).
-	•	Loss Conditions: The player loses if their company reaches 0 or if a competitor reaches 100.
+Osserva sempre la distribuzione delle aziende e la posizione dello Sbirro per pianificare al meglio i turni futuri.
