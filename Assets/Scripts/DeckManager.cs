@@ -38,7 +38,7 @@ public class DeckManager : MonoBehaviour
     {
         deck = new Stack<CardClass>();
         Vector3 currentPosition = deckPosition.position;
-        Quaternion faceDownRotation = Quaternion.Euler(180, 0, 0); // Changed rotation axis
+        Quaternion faceDownRotation = Quaternion.Euler(270, 0, 0); // Changed to 270 degrees to face down
 
         for (int i = 0; i < initialDeckSize; i++)
         {
@@ -54,41 +54,20 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    // Updated draw method with position parameter and animation
-    public CardClass DrawCard(Transform handPosition)
+    // Simplified draw method that just returns a card
+    public CardClass DrawCard()
     {
         if (deck.Count > 0)
         {
             CardClass drawnCard = deck.Pop();
-            Vector3 startPos = drawnCard.transform.position;
-            Vector3 endPos = handPosition.position;
-            
-            // Calculate intermediate points for the natural drawing motion
-            Vector3 straightOutPos = startPos + (Vector3.right * 0.5f); // Move straight out first
-            Vector3 midPoint = Vector3.Lerp(straightOutPos, endPos, 0.6f) + (Vector3.up * 0.5f); // Arc point
-            
-            // Create animation sequence
-            Sequence drawSequence = DOTween.Sequence();
-            
-            // Create path with more control points for natural motion
-            Vector3[] path = new Vector3[] { 
-                startPos,
-                straightOutPos,
-                midPoint,
-                endPos 
-            };
-            
-            drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.CatmullRom)
-                .SetEase(Ease.OutQuad));
-            drawSequence.Join(drawnCard.transform.DORotate(Vector3.zero, drawAnimationDuration));
-            
+            drawnCard.transform.rotation = Quaternion.Euler(270, 0, 0); // Keep face down
             return drawnCard;
         }
         else
         {
             Debug.Log("Deck is empty! Generating a new deck.");
             GenerateDeck();
-            return DrawCard(handPosition);
+            return DrawCard();
         }
     }
 
