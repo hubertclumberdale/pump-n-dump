@@ -38,7 +38,7 @@ public class DeckManager : MonoBehaviour
     {
         deck = new Stack<CardClass>();
         Vector3 currentPosition = deckPosition.position;
-        Quaternion faceDownRotation = Quaternion.Euler(180, 0, 0); // Changed rotation axis
+        Quaternion faceDownRotation = Quaternion.Euler(270, 0, 0); // Changed to 270 degrees to face down
 
         for (int i = 0; i < initialDeckSize; i++)
         {
@@ -79,7 +79,7 @@ public class DeckManager : MonoBehaviour
             };
             
             drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.CatmullRom)
-                .SetEase(Ease.OutQuad));
+                .SetEase(Ease.InQuad));  // Changed from OutQuad to InQuad
             drawSequence.Join(drawnCard.transform.DORotate(Vector3.zero, drawAnimationDuration));
             
             return drawnCard;
