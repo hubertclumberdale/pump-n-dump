@@ -62,15 +62,45 @@ public class QueueManager : MonoBehaviour
     IEnumerator InitializeQueue()
     {
         customerQueue = new Queue<CustomerClass>();
-        isQueueInitialized = false;  // Make sure it's false at start
+        isQueueInitialized = false;
 
+        // Create and position all customers at once
         for (int i = 0; i < queueSize; i++)
         {
-            AddRandomCustomerToQueue();
-            yield return AdvanceQueue();
+            GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+            CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
+            customerQueue.Enqueue(newCustomer);
+
+            Vector3 targetPos = GetQueuePosition(queueSize - 1 - i);  // Position from back to front
+            
+            Sequence moveSequence = DOTween.Sequence();
+            moveSequence.Append(newCustomer.transform.DOMove(targetPos, moveToPlayDuration)
+                .SetEase(Ease.Linear));
+
+            // Add jumping effect
+            int totalJumps = Mathf.FloorToInt(moveToPlayDuration * jumpsPerSecond);
+            float jumpDuration = moveToPlayDuration / totalJumps;
+
+            for (int j = 0; j < totalJumps; j++)
+            {
+                moveSequence.Join(newCustomer.transform.DOMoveY(
+                    newCustomer.transform.position.y + jumpHeight,
+                    jumpDuration * 0.5f)
+                    .SetLoops(2, LoopType.Yoyo)
+                    .SetEase(Ease.OutQuad)
+                    .SetDelay(j * jumpDuration));
+            }
+
+            yield return new WaitForSeconds(0.2f); // Small delay between each customer's start
         }
 
-        isQueueInitialized = true;  // Queue is now fully initialized
+        yield return new WaitForSeconds(moveToPlayDuration); // Wait for all movements to complete
+        isQueueInitialized = true;
+    }
+
+    private Vector3 GetQueuePosition(int positionFromFront)
+    {
+        return spawnPoint.position + new Vector3(0.65f * (positionFromFront + 1), 0, -0.2f * (positionFromFront + 1));
     }
 
     // Aggiunge una persona casuale alla fine della fila

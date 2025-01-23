@@ -71,8 +71,15 @@ public class PlayerManager : MonoBehaviour
         StartCoroutine(DrawCardCoroutine());
     }
 
+    public bool CanPlayCards()
+    {
+        return QueueManager.Instance.currentPlayingCustomer != null;
+    }
+
     public void PlayCard(int cardIndex)
     {
+        if (!CanPlayCards()) return;
+        
         if (cardIndex >= 0 && cardIndex < hand.Count)
         {
             CardClass cardToPlay = hand[cardIndex];
