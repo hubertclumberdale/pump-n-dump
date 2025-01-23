@@ -205,7 +205,7 @@ MonoBehaviour:
   initialDeckSize: 100
   deckPosition: {fileID: 742155988}
   cardSpacing: 0.001
-  drawAnimationDuration: 0.5
+  drawAnimationDuration: 1
 --- !u!1 &277023754
 GameObject:
   m_ObjectHideFlags: 0
