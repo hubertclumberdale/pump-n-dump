@@ -40,14 +40,10 @@ public class QueueManager : MonoBehaviour
         StartCoroutine(InitializeQueue());
     }
 
+    // Remove the A key check from Update since we don't need manual movement anymore
     void Update()
     {
-        if (!isQueueInitialized) return;  // Skip if queue isn't initialized yet
-
-        if (Input.GetKeyDown(KeyCode.A) && currentPlayingCustomer == null) // Only allow if play position is empty
-        {
-            StartCoroutine(MoveCustomerToPlayPosition());
-        }
+        if (!isQueueInitialized) return;
     }
 
     // Inizializza la fila con persone casuali
@@ -88,6 +84,10 @@ public class QueueManager : MonoBehaviour
 
         yield return new WaitForSeconds(moveToPlayDuration); // Wait for all movements to complete
         isQueueInitialized = true;
+        
+        // Automatically move first customer after queue initialization
+        yield return new WaitForSeconds(0.5f); // Small delay for better visual flow
+        yield return StartCoroutine(MoveCustomerToPlayPosition());
     }
 
     private Vector3 GetQueuePosition(int positionFromFront)
