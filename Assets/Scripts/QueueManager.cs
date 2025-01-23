@@ -48,14 +48,6 @@ public class QueueManager : MonoBehaviour
         {
             StartCoroutine(MoveCustomerToPlayPosition());
         }
-        if (Input.GetKeyDown(KeyCode.S) && customerAtPlayPosition) // Changed condition
-        {
-            StartCoroutine(HandleCustomerExit());
-        }
-        if (Input.GetKeyDown(KeyCode.D)) // Added condition check
-        {
-            DeckManager.Instance.DrawCard(handPosition);
-        }
     }
 
     // Inizializza la fila con persone casuali
@@ -183,11 +175,17 @@ public class QueueManager : MonoBehaviour
             currentPlayingCustomer = null;
             customerAtPlayPosition = false;
 
-            // First wait for current customer to exit completely
+            // Wait for current customer to exit
             yield return StartCoroutine(MoveCustomerToExit(customerToExit));
-
-            // Only after exit is complete, move the next customer
-            yield return StartCoroutine(MoveCustomerToPlayPosition());
+            
+            // Small delay before next customer moves
+            yield return new WaitForSeconds(0.2f);
+            
+            // Move next customer to play position
+            if (customerQueue.Count > 0)
+            {
+                yield return StartCoroutine(MoveCustomerToPlayPosition());
+            }
         }
     }
 

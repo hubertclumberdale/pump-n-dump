@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System.Collections;  // Add this line for IEnumerator
 
 public class CardClass : MonoBehaviour
 {
@@ -48,9 +49,16 @@ public class CardClass : MonoBehaviour
 
         playSequence.OnComplete(() => {
             ApplyCardEffects();
-            
-            Destroy(gameObject);
+            // Move card destruction to after effects are applied
+            QueueManager.Instance.StartCoroutine(DestroyAfterEffects());
         });
+    }
+
+    private IEnumerator DestroyAfterEffects()
+    {
+        // Wait a small amount of time to ensure effects are processed
+        yield return new WaitForSeconds(0.1f);
+        Destroy(gameObject);
     }
 
     private void ApplyCardEffects()
@@ -86,8 +94,8 @@ public class CardClass : MonoBehaviour
             // QueueManager.Instance.MoveCopToEndOfQueue();
         }
 
-        // After all effects are applied, trigger customer exit
-        StartCoroutine(QueueManager.Instance.HandleCustomerExit());
+        // Start customer exit from QueueManager directly
+        QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
     }
 
     private void OnDestroy()
