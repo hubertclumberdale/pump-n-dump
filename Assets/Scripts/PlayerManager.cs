@@ -12,6 +12,7 @@ public class PlayerManager : MonoBehaviour
     private int currentDrawIndex = 0;
     private bool isDrawing = false;
     public Transform playedCardPosition; // Add this field
+    private bool[] occupiedPositions; // Track which positions are taken
 
     void Awake()
     {
@@ -19,6 +20,7 @@ public class PlayerManager : MonoBehaviour
         {
             Instance = this;
             hand = new List<CardClass>();
+            occupiedPositions = new bool[maxHandSize];
         }
         else
         {
@@ -51,17 +53,50 @@ public class PlayerManager : MonoBehaviour
         }
     }
 
+    private int FindFirstEmptyPosition()
+    {
+        for (int i = 0; i < maxHandSize; i++)
+        {
+            if (!occupiedPositions[i])
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     private IEnumerator DrawCardCoroutine()
     {
         if (hand.Count < maxHandSize && DeckManager.Instance != null)
         {
-            CardClass newCard = DeckManager.Instance.DrawCard(handPositions[hand.Count]);
-            if (newCard != null)
+            int emptyPos = FindFirstEmptyPosition();
+            if (emptyPos != -1)
             {
-                int handIndex = hand.Count;
-                newCard.SetHandIndex(handIndex);
-                hand.Add(newCard);
-                yield return new WaitForSeconds(DeckManager.Instance.drawAnimationDuration);
+                CardClass newCard = DeckManager.Instance.DrawCard();
+                if (newCard != null)
+                {
+                    // Handle animation here
+                    Vector3 startPos = newCard.transform.position;
+                    Vector3 endPos = handPositions[emptyPos].position;
+                    Vector3 midPoint = Vector3.Lerp(startPos, endPos, 0.5f) + (Vector3.up * 0.3f);
+
+                    Sequence drawSequence = DOTween.Sequence();
+                    Vector3[] path = new Vector3[] { 
+                        startPos,
+                        midPoint,
+                        endPos 
+                    };
+                    
+                    drawSequence.Append(newCard.transform.DOPath(path, 0.5f, PathType.Linear)
+                        .SetEase(Ease.Linear));
+                    drawSequence.Join(newCard.transform.DORotate(Vector3.zero, 0.5f));
+
+                    newCard.SetHandIndex(emptyPos);
+                    hand.Add(newCard);
+                    occupiedPositions[emptyPos] = true;
+                    
+                    yield return new WaitForSeconds(0.5f);
+                }
             }
         }
     }
@@ -80,12 +115,26 @@ public class PlayerManager : MonoBehaviour
     {
         if (!CanPlayCards()) return;
         
-        if (cardIndex >= 0 && cardIndex < hand.Count)
+        if (cardIndex >= 0 && cardIndex < maxHandSize && occupiedPositions[cardIndex])
         {
-            CardClass cardToPlay = hand[cardIndex];
-            hand.RemoveAt(cardIndex);
-            cardToPlay.Play(playedCardPosition);
-            DrawCard();
+            CardClass cardToPlay = null;
+            // Find the card with matching index
+            foreach (CardClass card in hand)
+            {
+                if (card.GetHandIndex() == cardIndex)
+                {
+                    cardToPlay = card;
+                    break;
+                }
+            }
+
+            if (cardToPlay != null)
+            {
+                hand.Remove(cardToPlay);
+                occupiedPositions[cardIndex] = false;
+                cardToPlay.Play(playedCardPosition);
+                DrawCard();
+            }
         }
     }
 }

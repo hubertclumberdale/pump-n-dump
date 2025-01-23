@@ -54,39 +54,20 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    // Updated draw method with position parameter and animation
-    public CardClass DrawCard(Transform handPosition)
+    // Simplified draw method that just returns a card
+    public CardClass DrawCard()
     {
         if (deck.Count > 0)
         {
             CardClass drawnCard = deck.Pop();
-            Vector3 startPos = drawnCard.transform.position;
-            Vector3 endPos = handPosition.position;
-            
-            // Calculate a single arc point for smooth diagonal movement
-            Vector3 midPoint = Vector3.Lerp(startPos, endPos, 0.5f) + (Vector3.up * 0.3f);
-            
-            // Create animation sequence
-            Sequence drawSequence = DOTween.Sequence();
-            
-            // Simplified path with just three points for smoother motion
-            Vector3[] path = new Vector3[] { 
-                startPos,
-                midPoint,
-                endPos 
-            };
-            
-            drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.Linear)
-                .SetEase(Ease.Linear));  // Changed from InQuad to Linear for constant speed
-            drawSequence.Join(drawnCard.transform.DORotate(Vector3.zero, drawAnimationDuration));
-            
+            drawnCard.transform.rotation = Quaternion.Euler(270, 0, 0); // Keep face down
             return drawnCard;
         }
         else
         {
             Debug.Log("Deck is empty! Generating a new deck.");
             GenerateDeck();
-            return DrawCard(handPosition);
+            return DrawCard();
         }
     }
 

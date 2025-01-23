@@ -28,6 +28,11 @@ public class CardClass : MonoBehaviour
         });
     }
 
+    public int GetHandIndex()
+    {
+        return handIndex;
+    }
+
     public void Initialize(CardScriptable data)
     {
         cardData = data;
