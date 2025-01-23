@@ -8,7 +8,7 @@ public class CardClass : MonoBehaviour
     public CardScriptable cardData;
     public Button cardButton;
     private float playAnimationDuration = 0.5f;
-    private float shakeAnimationDuration = 0.3f;
+    private float shakeAnimationDuration = 0.2f;  // Reduced from 0.3f to 0.2f
     private float fadeAnimationDuration = 0.3f;
     private int handIndex = -1;
 
@@ -35,21 +35,26 @@ public class CardClass : MonoBehaviour
 
     public void Play(Transform playedPosition)
     {
-        cardButton.interactable = false; // Prevent multiple clicks
+        cardButton.interactable = false;
 
         Sequence playSequence = DOTween.Sequence();
 
+        // First move to position
         playSequence.Append(transform.DOMove(playedPosition.position, playAnimationDuration)
             .SetEase(Ease.OutQuad));
         
-        playSequence.Append(transform.DOShakePosition(shakeAnimationDuration, 0.5f, 10, 90, false));
+        // Then shake, and wait until it's complete
+        playSequence.Append(transform.DOShakePosition(shakeAnimationDuration, 0.1f, 20, 45, false));
         
+        // Add a small pause between shake and fade
+        playSequence.AppendInterval(0.1f);
+        
+        // Finally fade out
         playSequence.Append(transform.DOScale(Vector3.zero, fadeAnimationDuration)
             .SetEase(Ease.InBack));
 
         playSequence.OnComplete(() => {
             ApplyCardEffects();
-            // Move card destruction to after effects are applied
             QueueManager.Instance.StartCoroutine(DestroyAfterEffects());
         });
     }
