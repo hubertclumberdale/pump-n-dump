@@ -53,7 +53,6 @@ public class GameManager : MonoBehaviour
             if (market.marketValue == 0)
             {
                 Debug.Log($"{market.marketData.marketName} has reached 0 and is out of the game.");
-                marketManager.RemoveMarket(market);
                 //queueManager.RemoveCustomersByCompany(market.marketData.company);
             }
             else if (market.marketValue == 100)
