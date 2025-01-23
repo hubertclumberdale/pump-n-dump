@@ -38,7 +38,7 @@ public class DeckManager : MonoBehaviour
     {
         deck = new Stack<CardClass>();
         Vector3 currentPosition = deckPosition.position;
-        Quaternion faceDownRotation = Quaternion.Euler(0, 0, 180);
+        Quaternion faceDownRotation = Quaternion.Euler(180, 0, 0); // Changed rotation axis
 
         for (int i = 0; i < initialDeckSize; i++)
         {
@@ -49,7 +49,7 @@ public class DeckManager : MonoBehaviour
                 Debug.LogError("Card prefab is missing CardClass component!");
                 continue;
             }
-            deck.Push(cardClass); // Changed from Enqueue to Push
+            deck.Push(cardClass);
             currentPosition += Vector3.up * cardSpacing;
         }
     }
@@ -60,8 +60,28 @@ public class DeckManager : MonoBehaviour
         if (deck.Count > 0)
         {
             CardClass drawnCard = deck.Pop();
-            drawnCard.transform.DOMove(handPosition.position, drawAnimationDuration)
-                    .SetEase(Ease.OutQuad);
+            Vector3 startPos = drawnCard.transform.position;
+            Vector3 endPos = handPosition.position;
+            
+            // Calculate intermediate points for the natural drawing motion
+            Vector3 straightOutPos = startPos + (Vector3.right * 0.5f); // Move straight out first
+            Vector3 midPoint = Vector3.Lerp(straightOutPos, endPos, 0.6f) + (Vector3.up * 0.5f); // Arc point
+            
+            // Create animation sequence
+            Sequence drawSequence = DOTween.Sequence();
+            
+            // Create path with more control points for natural motion
+            Vector3[] path = new Vector3[] { 
+                startPos,
+                straightOutPos,
+                midPoint,
+                endPos 
+            };
+            
+            drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.CatmullRom)
+                .SetEase(Ease.OutQuad));
+            drawSequence.Join(drawnCard.transform.DORotate(Vector3.zero, drawAnimationDuration));
+            
             return drawnCard;
         }
         else
