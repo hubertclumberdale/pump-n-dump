@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Basic
   m_EditorClassIdentifier: 
   cardName: Basic
+  probability: 
   cardSprite: {fileID: 0}
-  value: 15
-  secondaryValue: 0
+  valueForTarget: 5
+  valueForOthers: 0
   numberOfNextAffectedCustomers: 0
-  affectsAllMarkets: 0
+  affectsAllOtherMarketsToo: 0
   affectsWorstMarket: 0
   affectsBestMarket: 0
   shuffleQueue: 0
