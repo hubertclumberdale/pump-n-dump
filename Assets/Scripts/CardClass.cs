@@ -68,14 +68,22 @@ public class CardClass : MonoBehaviour
     {
         // Wait a small amount of time to ensure effects are processed
         yield return new WaitForSeconds(0.1f);
-        Destroy(gameObject);
+        Destroy(gameObject, 2f);
     }
 
     private void ApplyCardEffects()
     {
+
+        CustomerClass currentCustomer = QueueManager.Instance.currentPlayingCustomer;
+        if (currentCustomer == null) return;
+
+        string targetMarket = currentCustomer.market.marketData.marketName;
+
         if (cardData.valueForTarget != 0)
         {
-            // targetCustomer.Company.ApplyValue(cardData.valueForTarget);
+
+            // Apply value to the current customer's market
+            MarketManager.Instance.ModifyMarketValue(targetMarket, cardData.valueForTarget);
         }
 
         if (cardData.affectsAllOtherMarketsToo)

@@ -4,10 +4,23 @@ using System.Collections.Generic;
 
 public class MarketManager : MonoBehaviour
 {
+    public static MarketManager Instance { get; private set; }  // Add singleton Instance
     public List<MarketScriptable> marketScriptables; // List of market scriptables
     public GameObject marketPrefab; // Prefab to instantiate
     public Transform marketsParent; // Parent transform for instantiated markets
     public List<MarketClass> markets; // Lista di tutti i mercati nel gioco
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {
@@ -44,20 +57,14 @@ public class MarketManager : MonoBehaviour
         if (market != null)
         {
             market.marketValue += amount;
-            market.marketValue = Mathf.Clamp(market.marketValue, 0, 100); // Limita il valore tra 0 e 100
-            UpdateMarketUI(market);
+            market.marketValue = Mathf.Clamp(market.marketValue, 0, 100);
+            market.UpdateUI();
             CheckMarketStatus(market);
         }
         else
         {
             Debug.LogWarning($"Market {marketName} not found!");
         }
-    }
-
-    // Metodo per aggiornare l'interfaccia utente del mercato
-    private void UpdateMarketUI(MarketClass market)
-    {
-        
     }
 
     // Metodo per controllare lo stato di un mercato (es. se arriva a 0 o 100)
@@ -77,6 +84,9 @@ public class MarketManager : MonoBehaviour
     // Metodo per aggiornare tutti i mercati nella UI (ad esempio all'inizio del gioco)
     public void UpdateAllMarketsUI()
     {
-        
+        foreach (MarketClass market in markets)
+        {
+            market.UpdateUI();
+        }
     }
 }

@@ -45,7 +45,7 @@ public class MarketClass : MonoBehaviour
         UpdateUI();
     }
 
-    private void UpdateUI()
+    public void UpdateUI()
     {
         if (valueText != null)
         {
@@ -54,8 +54,24 @@ public class MarketClass : MonoBehaviour
         
         if (barFillImage != null)
         {
-            // Update fill amount if it's using Image.fillAmount
             barFillImage.fillAmount = marketValue / 100f;
+            
+            // Optional: Change color based on value
+            Color currentColor = marketData.marketColor;
+            if (marketValue < 30)
+            {
+                currentColor.a = 0.5f; // Make it more transparent when low
+            }
+            barFillImage.color = currentColor;
+        }
+
+        if (iconImage != null)
+        {
+            // Optional: Shake or pulse the icon when value changes significantly
+            if (Mathf.Abs(marketValue - marketData.initialValue) > 20)
+            {
+/*                 iconImage.transform.DOShakeScale(0.3f, 0.1f);
+ */            }
         }
     }
 }
