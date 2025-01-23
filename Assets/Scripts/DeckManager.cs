@@ -63,23 +63,21 @@ public class DeckManager : MonoBehaviour
             Vector3 startPos = drawnCard.transform.position;
             Vector3 endPos = handPosition.position;
             
-            // Calculate intermediate points for the natural drawing motion
-            Vector3 straightOutPos = startPos + (Vector3.right * 0.5f); // Move straight out first
-            Vector3 midPoint = Vector3.Lerp(straightOutPos, endPos, 0.6f) + (Vector3.up * 0.5f); // Arc point
+            // Calculate a single arc point for smooth diagonal movement
+            Vector3 midPoint = Vector3.Lerp(startPos, endPos, 0.5f) + (Vector3.up * 0.3f);
             
             // Create animation sequence
             Sequence drawSequence = DOTween.Sequence();
             
-            // Create path with more control points for natural motion
+            // Simplified path with just three points for smoother motion
             Vector3[] path = new Vector3[] { 
                 startPos,
-                straightOutPos,
                 midPoint,
                 endPos 
             };
             
-            drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.CatmullRom)
-                .SetEase(Ease.InQuad));  // Changed from OutQuad to InQuad
+            drawSequence.Append(drawnCard.transform.DOPath(path, drawAnimationDuration, PathType.Linear)
+                .SetEase(Ease.Linear));  // Changed from InQuad to Linear for constant speed
             drawSequence.Join(drawnCard.transform.DORotate(Vector3.zero, drawAnimationDuration));
             
             return drawnCard;
