@@ -4,7 +4,7 @@ public class CustomerClass : MonoBehaviour
 {
     public MarketClass market;
     [Range(0f, 1f)]
-    public static float copChance = 0.1f;  // 5% chance to be a cop, shared by all customers
+    public static float copChance = 0.08f;  // 5% chance to be a cop, shared by all customers
     public bool isCop = false;
     private Color copColor = Color.blue;  // Or whatever color you want for cops
 
@@ -25,7 +25,7 @@ public class CustomerClass : MonoBehaviour
     private void Start()
     {
         // Determine if this customer is a cop
-        isCop = Random.value < copChance;
+        isCop = UnityEngine.Random.Range(0f, 1f) < copChance;
 
         if (!isCop)
         {
