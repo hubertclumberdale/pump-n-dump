@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Affect other markets
   description: Dai un +10 al cliente corrente e un -5 a tutti gli altri
-  probability: 
+  probability: 0.75
   color: {r: 0.53706837, g: 0.61151886, b: 0.764151, a: 1}
   cardSprite: {fileID: -2131019442, guid: 422329838235ca74196c1084e5595658, type: 3}
   valueForTarget: 10
@@ -24,6 +24,7 @@ MonoBehaviour:
   affectsWorstMarket: 0
   affectsBestMarket: 0
   shuffleQueue: 0
-  shuffleHand: 0
+  resetQueue: 0
+  resetHand: 0
   removesCopFromQueue: 0
   movesCopToEndOfQueue: 0

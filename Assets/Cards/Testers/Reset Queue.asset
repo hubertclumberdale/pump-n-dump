@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Reset Queue
   description: Dai un +5 a tutti e resetta la coda
-  probability: 
+  probability: 0.2
   color: {r: 0.7647059, g: 0.5372549, b: 0.5794795, a: 1}
   cardSprite: {fileID: -2131019442, guid: 422329838235ca74196c1084e5595658, type: 3}
   valueForTarget: 5
