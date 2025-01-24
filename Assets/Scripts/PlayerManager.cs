@@ -131,7 +131,8 @@ public class PlayerManager : MonoBehaviour
                     
                     drawSequence.Append(newCard.transform.DOPath(path, 0.5f, PathType.Linear)
                         .SetEase(Ease.Linear));
-                    drawSequence.Join(newCard.transform.DORotate(Vector3.zero, 0.5f));
+                    drawSequence.Join(newCard.transform.DORotate(Vector3.zero, 0.5f)
+                        .SetEase(Ease.InOutSine)); // Added easing
 
                     newCard.SetHandIndex(emptyPos);
                     hand.Add(newCard);

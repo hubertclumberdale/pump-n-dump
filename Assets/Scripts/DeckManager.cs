@@ -12,7 +12,6 @@ public class DeckManager : MonoBehaviour
     public float drawAnimationDuration = 0.5f; // Duration of draw animation
     private Stack<CardClass> deck; // Changed from Queue to Stack
     public List<CardScriptable> possibleCards;  // Add this field for available card scriptables
-    private bool hasGeneratedNewDeck = false;  // Track if we've already regenerated the deck once
 
     void Awake()
     {
@@ -40,7 +39,6 @@ public class DeckManager : MonoBehaviour
 
     public void Reset()
     {
-        hasGeneratedNewDeck = false;
         while (deck != null && deck.Count > 0)
         {
             CardClass card = deck.Pop();
@@ -84,7 +82,6 @@ public class DeckManager : MonoBehaviour
         }
     }
 
-    // Simplified draw method that just returns a card
     public CardClass DrawCard()
     {
         if (deck.Count > 0)
@@ -93,31 +90,16 @@ public class DeckManager : MonoBehaviour
             drawnCard.transform.rotation = Quaternion.Euler(270, 0, 0);
             
             // Check if deck is empty after drawing
-            if (deck.Count == 0 && !hasGeneratedNewDeck)
-            {
-                hasGeneratedNewDeck = true;
-                Debug.Log("Last card drawn from first deck!");
-            }
-            else if (deck.Count == 0 && hasGeneratedNewDeck)
+            if (deck.Count == 0)
             {
                 GameManager.Instance.EndGameDeckEmpty();
-                return drawnCard;
             }
             
             return drawnCard;
         }
-        else if (!hasGeneratedNewDeck)
-        {
-            Debug.Log("Deck is empty! Generating final deck.");
-            hasGeneratedNewDeck = true;
-            GenerateDeck();
-            return DrawCard();
-        }
-        else
-        {
-            GameManager.Instance.EndGameDeckEmpty();
-            return null;
-        }
+
+        GameManager.Instance.EndGameDeckEmpty();
+        return null;
     }
 
     // Restituisce il numero di carte rimanenti nel mazzo
