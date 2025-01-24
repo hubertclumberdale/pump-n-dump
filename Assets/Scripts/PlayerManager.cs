@@ -9,7 +9,9 @@ public class PlayerManager : MonoBehaviour
 {
     public static PlayerManager Instance { get; private set; }
     public List<CardClass> hand;
+    [Header("Card Positions")]
     public Transform[] handPositions = new Transform[3];  // Array of positions for cards
+    public Vector3 finalCardRotation = Vector3.zero; // Add this to make it configurable
     public int maxHandSize = 3;
     private int currentDrawIndex = 0;
     private bool isDrawing = false;
@@ -131,8 +133,8 @@ public class PlayerManager : MonoBehaviour
                     
                     drawSequence.Append(newCard.transform.DOPath(path, 0.5f, PathType.Linear)
                         .SetEase(Ease.Linear));
-                    drawSequence.Join(newCard.transform.DORotate(Vector3.zero, 0.5f)
-                        .SetEase(Ease.InOutSine)); // Added easing
+                    drawSequence.Join(newCard.transform.DORotate(handPositions[emptyPos].rotation.eulerAngles, 0.5f)
+                        .SetEase(Ease.InOutSine)); // Updated to use handPosition's rotation
 
                     newCard.SetHandIndex(emptyPos);
                     hand.Add(newCard);

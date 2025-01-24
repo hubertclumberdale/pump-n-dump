@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
     private void ResetGame()
     {
         DisplayStatus("Game Reset!");
-        PlayerManager.Instance.Reset(); // This will handle both hand and target market reset
+        PlayerManager.Instance.Reset(); 
         MarketManager.Instance.Reset();
         DeckManager.Instance.Reset();
         QueueManager.Instance.Reset();
