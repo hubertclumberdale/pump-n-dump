@@ -293,6 +293,11 @@ MonoBehaviour:
   deckPosition: {fileID: 742155988}
   cardSpacing: 0.001
   drawAnimationDuration: 1
+  possibleCards:
+  - {fileID: 11400000, guid: 23b5b2cbc439e4429b47755c7705a204, type: 2}
+  - {fileID: 11400000, guid: ba6197fd7a0494c6bb1e7b13f132a1b2, type: 2}
+  - {fileID: 11400000, guid: 4e51f12cc53b34b8895e268cf1390f60, type: 2}
+  - {fileID: 11400000, guid: 1b6a7d96a2b394643b051b9352c40fa9, type: 2}
 --- !u!1 &175718040
 GameObject:
   m_ObjectHideFlags: 0

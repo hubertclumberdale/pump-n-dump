@@ -117,8 +117,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8436778852693512204}
   - {fileID: 5578519768721185342}
+  - {fileID: 8436778852693512204}
   - {fileID: 1484586878805193071}
   m_Father: {fileID: 8127095091939933928}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -328,8 +328,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardData: {fileID: 11400000, guid: 23b5b2cbc439e4429b47755c7705a204, type: 2}
   cardButton: {fileID: 8179424869382558575}
-  titleText: {fileID: 2734786225408527959}
-  descrText: {fileID: 1089631064542269785}
+  titleText: {fileID: 1089631064542269785}
+  descriptionText: {fileID: 2734786225408527959}
   iconImg: {fileID: 7070411609539545088}
   cardBackground: {fileID: 3200340654763802447}
 --- !u!1 &7901364836456617480
@@ -344,7 +344,7 @@ GameObject:
   - component: {fileID: 8423985282609937272}
   - component: {fileID: 2734786225408527959}
   m_Layer: 5
-  m_Name: Title
+  m_Name: Description
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -424,10 +424,10 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 17.8
+  m_fontSize: 16
   m_fontSizeBase: 17.8
   m_fontWeight: 400
-  m_enableAutoSizing: 0
+  m_enableAutoSizing: 1
   m_fontSizeMin: 0
   m_fontSizeMax: 16
   m_fontStyle: 0
@@ -442,7 +442,7 @@ MonoBehaviour:
   m_charWidthMaxAdj: 0
   m_TextWrappingMode: 1
   m_wordWrappingRatios: 0.4
-  m_overflowMode: 0
+  m_overflowMode: 2
   m_linkedTextComponent: {fileID: 0}
   parentLinkedComponent: {fileID: 0}
   m_enableKerning: 0
@@ -646,7 +646,7 @@ GameObject:
   - component: {fileID: 6932785325215239855}
   - component: {fileID: 1089631064542269785}
   m_Layer: 5
-  m_Name: Desc
+  m_Name: Title
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -13,7 +13,7 @@ public class CardClass : MonoBehaviour
     private int handIndex = -1;
 
     public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descrText;
+    public TextMeshProUGUI descriptionText;
     public Image iconImg;
 
     public Image cardBackground;
@@ -43,7 +43,50 @@ public class CardClass : MonoBehaviour
     {
         cardData = data;
 
-        cardBackground.color = cardData.color;
+        // Set card background color
+        if (cardBackground != null)
+        {
+            cardBackground.color = cardData.color;
+        }
+
+        // Set card title
+        if (titleText != null)
+        {
+            titleText.text = data.cardName;  // Make sure to use the correct property name from CardScriptable
+        }
+        else
+        {
+            Debug.LogError("Title Text component is missing!");
+        }
+
+        // Set card description
+        if (descriptionText != null)
+        {
+            descriptionText.text = data.description;
+        }
+        else
+        {
+            Debug.LogError("Description Text component is missing!");
+        }
+
+        // Set card icon
+        if (iconImg != null)
+        {
+            if (cardData.cardSprite != null)
+            {
+                iconImg.sprite = cardData.cardSprite;
+                iconImg.enabled = true;      // Make sure it's visible
+            }
+            else
+            {
+                Debug.LogWarning("Card sprite is missing in CardScriptable!");
+                iconImg.enabled = false;     // Hide if no sprite
+            }
+        }
+        else
+        {
+            Debug.LogError("Icon Image component is missing!");
+        }
     }
 
     public void Play(Transform playedPosition)
@@ -81,32 +124,39 @@ public class CardClass : MonoBehaviour
 
     private void ApplyCardEffects()
     {
-
         CustomerClass currentCustomer = QueueManager.Instance.currentPlayingCustomer;
         if (currentCustomer == null) return;
 
         string targetMarket = currentCustomer.market.marketData.marketName;
-       
 
         if (cardData.valueForTarget != 0)
         {
-
-            // Apply value to the current customer's market
             MarketManager.Instance.ModifyMarketValue(targetMarket, cardData.valueForTarget);
         }
 
         if (cardData.affectsAllOtherMarketsToo)
         {
-            // MarketManager.Instance.ApplyValueToAllMarkets(cardData.valueForOthers);
+            foreach (MarketClass market in MarketManager.Instance.markets)
+            {
+                if (market.marketData.marketName != targetMarket)
+                {
+                    MarketManager.Instance.ModifyMarketValue(market.marketData.marketName, cardData.valueForOthers);
+                }
+            }
         }
 
         // Apply shuffle, remove, or move effects based on the flags in CardScriptable
         if (cardData.shuffleQueue)
         {
-            // QueueManager.Instance.ShuffleQueue();
+            QueueManager.Instance.StartCoroutine(QueueManager.Instance.ShuffleQueue());
         }
 
-        if (cardData.shuffleHand)
+        if (cardData.resetQueue)
+        {
+            QueueManager.Instance.StartCoroutine(QueueManager.Instance.ResetQueue());
+        }
+
+        if (cardData.resetHand)
         {
             // HandManager.Instance.ShuffleHand();
         }

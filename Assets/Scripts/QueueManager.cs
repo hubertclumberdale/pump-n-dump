@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;  // Add this line to use ToList()
 using UnityEngine;
 using DG.Tweening;
 
@@ -214,5 +215,73 @@ public class QueueManager : MonoBehaviour
 
         yield return exitSequence.WaitForCompletion();
         Destroy(customer.gameObject);
+    }
+
+    public IEnumerator ShuffleQueue()
+    {
+        if (customerQueue.Count <= 1) yield break;
+
+        // Convert queue to list for shuffling
+        List<CustomerClass> customerList = customerQueue.ToList();
+        
+        // Fisher-Yates shuffle
+        for (int i = customerList.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            CustomerClass temp = customerList[i];
+            customerList[i] = customerList[randomIndex];
+            customerList[randomIndex] = temp;
+        }
+
+        // Clear and refill queue
+        customerQueue.Clear();
+        foreach (CustomerClass customer in customerList)
+        {
+            customerQueue.Enqueue(customer);
+        }
+
+        // Reposition all customers
+        CustomerClass[] customers = customerQueue.ToArray();
+        for (int i = 0; i < customers.Length; i++)
+        {
+            Vector3 newPosition = GetQueuePosition(customers.Length - 1 - i);
+            
+            Sequence moveSequence = DOTween.Sequence();
+            
+            // Jump up
+            moveSequence.Append(customers[i].transform.DOMoveY(
+                customers[i].transform.position.y + 0.5f, 0.3f)
+                .SetEase(Ease.OutQuad));
+            
+            // Move to new position
+            moveSequence.Append(customers[i].transform.DOMove(newPosition, 0.5f)
+                .SetEase(Ease.InOutQuad));
+            
+            // Land down
+            moveSequence.Append(customers[i].transform.DOMoveY(
+                newPosition.y, 0.3f)
+                .SetEase(Ease.InQuad));
+            
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    public IEnumerator ResetQueue()
+    {
+        // Move all current customers to exit
+        CustomerClass[] currentCustomers = customerQueue.ToArray();
+        customerQueue.Clear();
+        
+        // Move all customers to exit simultaneously
+        foreach (CustomerClass customer in currentCustomers)
+        {
+            StartCoroutine(MoveCustomerToExit(customer));
+        }
+
+        // Wait for customers to reach exit point
+        yield return new WaitForSeconds(moveToExitDuration + 0.2f);
+
+        // Reinitialize the queue
+        yield return StartCoroutine(InitializeQueue());
     }
 }

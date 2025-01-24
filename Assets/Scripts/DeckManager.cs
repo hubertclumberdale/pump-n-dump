@@ -11,6 +11,7 @@ public class DeckManager : MonoBehaviour
     public float cardSpacing = 0.01f; // Vertical spacing between cards
     public float drawAnimationDuration = 0.5f; // Duration of draw animation
     private Stack<CardClass> deck; // Changed from Queue to Stack
+    public List<CardScriptable> possibleCards;  // Add this field for available card scriptables
 
     void Awake()
     {
@@ -36,6 +37,12 @@ public class DeckManager : MonoBehaviour
     // Genera il mazzo all'inizio del gioco
     private void GenerateDeck()
     {
+        if (possibleCards == null || possibleCards.Count == 0)
+        {
+            Debug.LogError("No card scriptables assigned to DeckManager!");
+            return;
+        }
+
         deck = new Stack<CardClass>();
         Vector3 currentPosition = deckPosition.position;
         Quaternion faceDownRotation = Quaternion.Euler(270, 0, 0); // Changed to 270 degrees to face down
@@ -44,13 +51,18 @@ public class DeckManager : MonoBehaviour
         {
             GameObject cardObject = Instantiate(cardPrefab, currentPosition, faceDownRotation);
             CardClass cardClass = cardObject.GetComponent<CardClass>();
-            if (cardClass == null)
+            if (cardClass != null)
+            {
+                // Pick a random card scriptable
+                CardScriptable randomCard = possibleCards[Random.Range(0, possibleCards.Count)];
+                cardClass.Initialize(randomCard);
+                deck.Push(cardClass);
+                currentPosition += Vector3.up * cardSpacing;
+            }
+            else
             {
                 Debug.LogError("Card prefab is missing CardClass component!");
-                continue;
             }
-            deck.Push(cardClass);
-            currentPosition += Vector3.up * cardSpacing;
         }
     }
 

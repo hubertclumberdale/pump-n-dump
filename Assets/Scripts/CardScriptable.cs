@@ -5,9 +5,11 @@ public class CardScriptable : ScriptableObject
 {
 
     [Header("Card Description")]
-    public string cardName;
+    public string cardName;        // Changed from 'name' to avoid confusion with Unity's Object.name
+    public string description;
     public string probability;
 
+    [Header("Card Appearance")]
     public Color color;
     public Sprite cardSprite;
 
@@ -23,7 +25,8 @@ public class CardScriptable : ScriptableObject
 
 
     public bool shuffleQueue;
-    public bool shuffleHand;
+    public bool resetQueue;
+    public bool resetHand;
 
     public bool removesCopFromQueue;
     public bool movesCopToEndOfQueue;
