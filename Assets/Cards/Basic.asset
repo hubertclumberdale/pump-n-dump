@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Basic
   probability: 
+  color: {r: 0.53706837, g: 0.61151886, b: 0.764151, a: 0}
   cardSprite: {fileID: 0}
   valueForTarget: 5
   valueForOthers: 0

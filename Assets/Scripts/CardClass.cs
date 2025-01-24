@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections;  // Add this line for IEnumerator
-
+using TMPro;  
 public class CardClass : MonoBehaviour
 {
     public CardScriptable cardData;
@@ -11,6 +11,12 @@ public class CardClass : MonoBehaviour
     private float shakeAnimationDuration = 0.2f;  // Reduced from 0.3f to 0.2f
     private float fadeAnimationDuration = 0.3f;
     private int handIndex = -1;
+
+    public TextMeshProUGUI titleText;
+    public TextMeshProUGUI descrText;
+    public Image iconImg;
+
+    public Image cardBackground;
 
     public void SetHandIndex(int index)
     {
@@ -36,6 +42,8 @@ public class CardClass : MonoBehaviour
     public void Initialize(CardScriptable data)
     {
         cardData = data;
+
+        cardBackground.color = cardData.color;
     }
 
     public void Play(Transform playedPosition)
@@ -78,6 +86,7 @@ public class CardClass : MonoBehaviour
         if (currentCustomer == null) return;
 
         string targetMarket = currentCustomer.market.marketData.marketName;
+       
 
         if (cardData.valueForTarget != 0)
         {

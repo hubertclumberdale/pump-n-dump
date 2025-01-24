@@ -43,6 +43,8 @@ public class PlayerManager : MonoBehaviour
         }
 
         StartCoroutine(DrawInitialHandCoroutine());
+
+        StartBreathing();
     }
 
     private IEnumerator DrawInitialHandCoroutine()
@@ -136,5 +138,13 @@ public class PlayerManager : MonoBehaviour
                 DrawCard();
             }
         }
+    }
+
+    private void StartBreathing()
+    {
+        Quaternion initialRotation = Camera.main.transform.localRotation;
+          Camera.main.transform.DORotateQuaternion(initialRotation * Quaternion.Euler(0.5f, 0, -0.8f), 3f)
+            .SetEase(Ease.InOutSine)
+            .SetLoops(-1, LoopType.Yoyo);
     }
 }

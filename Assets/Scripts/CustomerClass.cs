@@ -24,6 +24,7 @@ public class CustomerClass : MonoBehaviour
             {
                 spriteRenderer.color = market.marketData.marketColor;
             }
+
         }
         else
         {

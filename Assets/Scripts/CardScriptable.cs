@@ -7,6 +7,8 @@ public class CardScriptable : ScriptableObject
     [Header("Card Description")]
     public string cardName;
     public string probability;
+
+    public Color color;
     public Sprite cardSprite;
 
     public int valueForTarget;

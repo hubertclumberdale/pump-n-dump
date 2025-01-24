@@ -53,6 +53,7 @@ public class MarketManager : MonoBehaviour
     // Metodo per modificare il valore di un mercato
     public void ModifyMarketValue(string marketName, int amount)
     {
+        Debug.Log("aaaaaaaaa_____" + marketName);
         MarketClass market = markets.Find(m => m.marketData.marketName == marketName);
         if (market != null)
         {
