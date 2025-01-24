@@ -163,6 +163,13 @@ public class QueueManager : MonoBehaviour
             CustomerClass customer = customerQueue.Dequeue();
             currentPlayingCustomer = customer; // Store reference
             
+            // Check if cop immediately when they reach play position
+            if (customer.isCop)
+            {
+                GameManager.Instance.LoseGameCop();
+                yield break;
+            }
+
             Sequence moveSequence = DOTween.Sequence();
             
             // Base movement

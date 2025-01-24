@@ -75,6 +75,15 @@ public class GameManager : MonoBehaviour
         UpdateButtonText();
     }
 
+    public void LoseGameCop()
+    {
+        if (!isGameRunning) return;
+        
+        DisplayStatus("Game Over - Busted by the cops!");
+        isGameRunning = false;
+        UpdateButtonText();
+    }
+
     public void EndGameDeckEmpty()
     {
         if (!isGameRunning) return;

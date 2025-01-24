@@ -3,6 +3,10 @@ using UnityEngine;
 public class CustomerClass : MonoBehaviour
 {
     public MarketClass market;
+    [Range(0f, 1f)]
+    public static float copChance = 0.1f;  // 5% chance to be a cop, shared by all customers
+    public bool isCop = false;
+    private Color copColor = Color.blue;  // Or whatever color you want for cops
 
     [Header("Body Part Renderers")]
     public SpriteRenderer head;
@@ -20,8 +24,21 @@ public class CustomerClass : MonoBehaviour
 
     private void Start()
     {
-        RandomizeBodyParts();
-        AssignRandomMarket();
+        // Determine if this customer is a cop
+        isCop = Random.value < copChance;
+
+        if (!isCop)
+        {
+            RandomizeBodyParts();
+            AssignRandomMarket();
+        }
+        else
+        {
+            market = null; // Cops don't have markets
+            RandomizeBodyParts();
+            Debug.Log("Cop spawned!");
+            ApplyColorToBodyParts(copColor);
+        }
     }
 
     private void RandomizeBodyParts()
