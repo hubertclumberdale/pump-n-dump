@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;  // Add this for Image
+using TMPro;  // Add this for TextMeshProUGUI
 using DG.Tweening;  // Add DOTween namespace
 
 public class PlayerManager : MonoBehaviour
@@ -13,6 +15,9 @@ public class PlayerManager : MonoBehaviour
     private bool isDrawing = false;
     public Transform playedCardPosition; // Add this field
     private bool[] occupiedPositions; // Track which positions are taken
+
+    public MarketClass targetMarket; // The market the player needs to pump
+    public Image targetMarketIcon; // Only keep the icon
 
     void Awake()
     {
@@ -41,9 +46,45 @@ public class PlayerManager : MonoBehaviour
             Debug.LogError("DeckManager instance not found!");
             return;
         }
+    }
 
+    public void Initialize()
+    {
+        AssignRandomTargetMarket();
         StartCoroutine(DrawInitialHandCoroutine());
+    }
 
+    public void Reset()
+    {
+        FlushHand();
+        targetMarket = null;
+        UpdateTargetMarketUI();
+    }
+
+    private void AssignRandomTargetMarket()
+    {
+        targetMarket = MarketManager.Instance.AssignRandomMarket();
+        UpdateTargetMarketUI();
+    }
+
+    private void UpdateTargetMarketUI()
+    {
+        if (targetMarketIcon != null)
+        {
+            if (targetMarket != null)
+            {
+                targetMarketIcon.sprite = targetMarket.marketData.marketIcon;
+            }
+            else
+            {
+                targetMarketIcon.sprite = null;
+            }
+        }
+    }
+
+    public bool IsTargetMarket(string marketName)
+    {
+        return targetMarket != null && targetMarket.marketData.marketName == marketName;
     }
 
     private IEnumerator DrawInitialHandCoroutine()
@@ -136,6 +177,25 @@ public class PlayerManager : MonoBehaviour
                 cardToPlay.Play(playedCardPosition);
                 DrawCard();
             }
+        }
+    }
+
+    public void FlushHand()
+    {
+        foreach (var card in hand)
+        {
+            if (card != null && card.gameObject != null)
+            {
+                Destroy(card.gameObject);
+            }
+        }
+        
+        hand.Clear();
+        
+        // Reset occupied positions
+        for (int i = 0; i < occupiedPositions.Length; i++)
+        {
+            occupiedPositions[i] = false;
         }
     }
 

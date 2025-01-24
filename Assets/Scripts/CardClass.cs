@@ -129,7 +129,7 @@ public class CardClass : MonoBehaviour
 
         string targetMarket = currentCustomer.market.marketData.marketName;
 
-        if (cardData.valueForTarget != 0)
+        if (cardData.valueForTarget != 0 && !cardData.affectsBestMarket && !cardData.affectsWorstMarket)
         {
             MarketManager.Instance.ModifyMarketValue(targetMarket, cardData.valueForTarget);
         }
@@ -145,17 +145,14 @@ public class CardClass : MonoBehaviour
             }
         }
 
-        // Apply shuffle, remove, or move effects based on the flags in CardScriptable
         if (cardData.shuffleQueue)
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.ShuffleQueue());
-            return; // Exit early since ShuffleQueue will handle the customer exit
         }
 
         if (cardData.resetQueue)
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.ResetQueue());
-            return;
         }
 
         if (cardData.resetHand)
@@ -173,8 +170,21 @@ public class CardClass : MonoBehaviour
             // QueueManager.Instance.MoveCopToEndOfQueue();
         }
 
-        // Only call HandleCustomerExit if we didn't shuffle
-        QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
+        if(cardData.affectsWorstMarket) 
+        {
+            string worstMarketName = MarketManager.Instance.GetWorstMarket().marketData.marketName;
+            MarketManager.Instance.ModifyMarketValue(worstMarketName, cardData.valueForTarget);
+        }
+
+        if(cardData.affectsBestMarket) 
+        {
+            string bestMarketName = MarketManager.Instance.GetBestMarket().marketData.marketName;
+            MarketManager.Instance.ModifyMarketValue(bestMarketName, cardData.valueForTarget);
+        }
+
+        if(!cardData.shuffleQueue && !cardData.resetQueue){
+            QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
+        }
     }
 
     private void OnDestroy()

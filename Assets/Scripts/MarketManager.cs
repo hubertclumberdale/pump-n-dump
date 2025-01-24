@@ -25,8 +25,25 @@ public class MarketManager : MonoBehaviour
     private void Start()
     {
         markets = new List<MarketClass>();
+    }
+
+    public void Initialize()
+    {
+        markets = new List<MarketClass>();
         InitializeMarkets();
         UpdateAllMarketsUI();
+    }
+
+    public void Reset()
+    {
+        foreach (var market in markets)
+        {
+            if (market != null && market.gameObject != null)
+            {
+                Destroy(market.gameObject);
+            }
+        }
+        markets.Clear();
     }
 
     // Inizializza i mercati con i valori dai MarketScriptable
@@ -70,14 +87,15 @@ public class MarketManager : MonoBehaviour
     // Metodo per controllare lo stato di un mercato (es. se arriva a 0 o 100)
     private void CheckMarketStatus(MarketClass market)
     {
-        if (market.marketValue == 0)
+        if (market.marketValue <= 0)
         {
-            Debug.Log($"{market.marketData.marketName} has reached 0 and is out of the game.");
+            market.marketValue = 0;  // Ensure it's exactly 0
+            GameManager.Instance.LoseGame(market.marketData.marketName);
         }
-        else if (market.marketValue == 100)
+        else if (market.marketValue >= 100)
         {
-            Debug.Log($"{market.marketData.marketName} has reached 100!");
-            // Aggiungere qui la logica per gestire la vittoria o la perdita
+            market.marketValue = 100;  // Ensure it's exactly 100
+            GameManager.Instance.WinGame(market.marketData.marketName);
         }
     }
 
@@ -88,5 +106,57 @@ public class MarketManager : MonoBehaviour
         {
             market.UpdateUI();
         }
+    }
+
+    public MarketClass GetWorstMarket()
+    {
+        if (markets == null || markets.Count == 0)
+            return null;
+
+        MarketClass worstMarket = markets[0];
+        float lowestValue = worstMarket.marketValue;
+
+        foreach (MarketClass market in markets)
+        {
+            if (market.marketValue < lowestValue)
+            {
+                lowestValue = market.marketValue;
+                worstMarket = market;
+            }
+        }
+
+        return worstMarket;
+    }
+
+    public MarketClass GetBestMarket()
+    {
+        if (markets == null || markets.Count == 0)
+            return null;
+
+        MarketClass bestMarket = markets[0];
+        float highestValue = bestMarket.marketValue;
+
+        foreach (MarketClass market in markets)
+        {
+            if (market.marketValue > highestValue)
+            {
+                highestValue = market.marketValue;
+                bestMarket = market;
+            }
+        }
+
+        return bestMarket;
+    }
+
+    public MarketClass AssignRandomMarket()
+    {
+        if (markets == null || markets.Count == 0)
+        {
+            Debug.LogError("No markets available to assign!");
+            return null;
+        }
+
+        int randomIndex = Random.Range(0, markets.Count);
+        return markets[randomIndex];
     }
 }

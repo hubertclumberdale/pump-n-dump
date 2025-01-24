@@ -35,10 +35,38 @@ public class QueueManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
-        
+    }
+
+    public void Initialize()
+    {
         StartCoroutine(InitializeQueue());
+    }
+
+    public void Reset()
+    {
+        StopAllCoroutines();
+        
+        if (currentPlayingCustomer != null)
+        {
+            Destroy(currentPlayingCustomer.gameObject);
+            currentPlayingCustomer = null;
+        }
+
+        if (customerQueue != null)
+        {
+            foreach (var customer in customerQueue)
+            {
+                if (customer != null && customer.gameObject != null)
+                {
+                    Destroy(customer.gameObject);
+                }
+            }
+            customerQueue.Clear();
+        }
+
+        isQueueInitialized = false;
+        customerAtPlayPosition = false;
     }
 
     // Remove the A key check from Update since we don't need manual movement anymore

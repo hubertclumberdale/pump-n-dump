@@ -28,10 +28,26 @@ public class DeckManager : MonoBehaviour
 
     void Start()
     {
-        if (Instance == this)
+        // Remove automatic initialization
+    }
+
+    public void Initialize()
+    {
+        deck = new Stack<CardClass>();
+        GenerateDeck();
+    }
+
+    public void Reset()
+    {
+        while (deck != null && deck.Count > 0)
         {
-            GenerateDeck();
+            CardClass card = deck.Pop();
+            if (card != null && card.gameObject != null)
+            {
+                Destroy(card.gameObject);
+            }
         }
+        deck = new Stack<CardClass>();
     }
 
     // Genera il mazzo all'inizio del gioco

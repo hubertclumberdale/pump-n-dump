@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68024fca259694c91a2e4d724b3a7814, type: 3}
+  m_Name: Best Market
+  m_EditorClassIdentifier: 
+  cardName: Affects Best Market
+  description: Dai un -10 al migliore market
+  probability: 
+  color: {r: 0.7647059, g: 0.5372549, b: 0.5794795, a: 1}
+  cardSprite: {fileID: -2131019442, guid: 422329838235ca74196c1084e5595658, type: 3}
+  valueForTarget: 10
+  valueForOthers: 0
+  numberOfNextAffectedCustomers: 0
+  affectsAllOtherMarketsToo: 0
+  affectsWorstMarket: 0
+  affectsBestMarket: 1
+  shuffleQueue: 0
+  resetQueue: 0
+  resetHand: 0
+  removesCopFromQueue: 0
+  movesCopToEndOfQueue: 0
