@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     public Button playResetButton;
+    public TextMeshProUGUI statusText;  // Add reference to status text
     private bool isGameRunning = false;
 
     void Awake()
@@ -53,11 +54,11 @@ public class GameManager : MonoBehaviour
                              
         if (isTargetMarket)
         {
-            Debug.Log($"Congratulations! You successfully pumped {marketName} to 100%!");
+            DisplayStatus($"Congratulations! You successfully pumped {marketName} to 100%!");
         }
         else
         {
-            Debug.Log($"Wrong market! {marketName} reached 100% but your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
+            DisplayStatus($"Wrong market! {marketName} reached 100% but your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
         }
         
         isGameRunning = false;
@@ -68,9 +69,34 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameRunning) return;
         
-        Debug.Log($"Game Lost! Market {marketName} crashed to 0!");
+        DisplayStatus($"Game Lost! Market {marketName} crashed to 0!");
         isGameRunning = false;
         // TODO: Show lose screen or animation
+        UpdateButtonText();
+    }
+
+    public void EndGameDeckEmpty()
+    {
+        if (!isGameRunning) return;
+        
+        DisplayStatus("Game Over - No more cards in deck!");
+        
+        if (PlayerManager.Instance.targetMarket != null)
+        {
+            float targetValue = PlayerManager.Instance.targetMarket.marketValue;
+            string marketName = PlayerManager.Instance.targetMarket.marketData.marketName;
+            
+            if (targetValue >= 100)
+            {
+                DisplayStatus($"You won! Successfully pumped {marketName} to {targetValue}%!");
+            }
+            else
+            {
+                DisplayStatus($"You lost! {marketName} only reached {targetValue}%");
+            }
+        }
+        
+        isGameRunning = false;
         UpdateButtonText();
     }
 
@@ -90,6 +116,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        DisplayStatus("Game Started!");
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();
@@ -98,9 +125,18 @@ public class GameManager : MonoBehaviour
 
     private void ResetGame()
     {
+        DisplayStatus("Game Reset!");
         PlayerManager.Instance.Reset(); // This will handle both hand and target market reset
         MarketManager.Instance.Reset();
         DeckManager.Instance.Reset();
         QueueManager.Instance.Reset();
+    }
+
+    private void DisplayStatus(string message)
+    {
+        if (statusText != null)
+        {
+            statusText.text = message;
+        }
     }
 }
