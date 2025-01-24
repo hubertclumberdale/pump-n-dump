@@ -155,6 +155,7 @@ public class CardClass : MonoBehaviour
         if (cardData.resetQueue)
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.ResetQueue());
+            return;
         }
 
         if (cardData.resetHand)

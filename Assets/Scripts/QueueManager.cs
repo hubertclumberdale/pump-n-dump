@@ -289,5 +289,8 @@ public class QueueManager : MonoBehaviour
 
         // Reinitialize the queue
         yield return StartCoroutine(InitializeQueue());
+
+        // Now handle the customer exit and next customer
+        yield return StartCoroutine(HandleCustomerExit());
     }
 }
