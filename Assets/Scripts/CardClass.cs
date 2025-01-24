@@ -149,6 +149,7 @@ public class CardClass : MonoBehaviour
         if (cardData.shuffleQueue)
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.ShuffleQueue());
+            return; // Exit early since ShuffleQueue will handle the customer exit
         }
 
         if (cardData.resetQueue)
@@ -171,7 +172,7 @@ public class CardClass : MonoBehaviour
             // QueueManager.Instance.MoveCopToEndOfQueue();
         }
 
-        // Start customer exit from QueueManager directly
+        // Only call HandleCustomerExit if we didn't shuffle
         QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
     }
 

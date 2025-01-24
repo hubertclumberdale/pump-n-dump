@@ -264,6 +264,12 @@ public class QueueManager : MonoBehaviour
             
             yield return new WaitForSeconds(0.1f);
         }
+
+        // Wait a bit after shuffle completes
+        yield return new WaitForSeconds(0.5f);
+        
+        // Now handle the customer exit and next customer
+        yield return StartCoroutine(HandleCustomerExit());
     }
 
     public IEnumerator ResetQueue()
