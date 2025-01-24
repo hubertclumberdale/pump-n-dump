@@ -7,6 +7,7 @@ public class CustomerClass : MonoBehaviour
     public static float copChance = 0.08f;  // 5% chance to be a cop, shared by all customers
     public bool isCop = false;
     private Color copColor = Color.blue;  // Or whatever color you want for cops
+    private bool forceNoCop = false;
 
     [Header("Body Part Renderers")]
     public SpriteRenderer head;
@@ -22,10 +23,15 @@ public class CustomerClass : MonoBehaviour
     public Sprite[] legSprites;
     public Sprite[] armSprites;
 
+    public void ForceCivilian()
+    {
+        forceNoCop = true;
+    }
+
     private void Start()
     {
         // Determine if this customer is a cop
-        isCop = UnityEngine.Random.Range(0f, 1f) < copChance;
+        isCop = !forceNoCop && (Random.value < copChance);
 
         if (!isCop)
         {
@@ -36,7 +42,6 @@ public class CustomerClass : MonoBehaviour
         {
             market = null; // Cops don't have markets
             RandomizeBodyParts();
-            Debug.Log("Cop spawned!");
             ApplyColorToBodyParts(copColor);
         }
     }

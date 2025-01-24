@@ -26,6 +26,8 @@ public class QueueManager : MonoBehaviour
 
     public Transform handPosition;
 
+    private const int SAFE_POSITIONS = 3;  // Number of initial positions where cops can't spawn
+
     void Start()
     {
         if (Instance == null)
@@ -86,6 +88,13 @@ public class QueueManager : MonoBehaviour
         {
             GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
             CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
+            
+            // Force non-cop for first SAFE_POSITIONS
+            if (i < SAFE_POSITIONS)
+            {
+                newCustomer.ForceCivilian();
+            }
+            
             customerQueue.Enqueue(newCustomer);
 
             Vector3 targetPos = GetQueuePosition(queueSize - 1 - i);  // Position from back to front
