@@ -7,7 +7,8 @@ public class CardScriptable : ScriptableObject
     [Header("Card Description")]
     public string cardName;        // Changed from 'name' to avoid confusion with Unity's Object.name
     public string description;
-    public string probability;
+    [Range(0f, 1f)]
+    public float probability = 1f; // Default probability of 100%
 
     [Header("Card Appearance")]
     public Color color;

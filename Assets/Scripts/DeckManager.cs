@@ -69,8 +69,8 @@ public class DeckManager : MonoBehaviour
             CardClass cardClass = cardObject.GetComponent<CardClass>();
             if (cardClass != null)
             {
-                // Pick a random card scriptable
-                CardScriptable randomCard = possibleCards[Random.Range(0, possibleCards.Count)];
+                // Use weighted random selection instead of uniform random
+                CardScriptable randomCard = GetRandomWeightedCard();
                 cardClass.Initialize(randomCard);
                 deck.Push(cardClass);
                 currentPosition += Vector3.up * cardSpacing;
@@ -80,6 +80,29 @@ public class DeckManager : MonoBehaviour
                 Debug.LogError("Card prefab is missing CardClass component!");
             }
         }
+    }
+
+    private CardScriptable GetRandomWeightedCard()
+    {
+        float totalWeight = 0f;
+        foreach (CardScriptable card in possibleCards)
+        {
+            totalWeight += card.probability;
+        }
+
+        float random = Random.Range(0f, totalWeight);
+        float current = 0f;
+
+        foreach (CardScriptable card in possibleCards)
+        {
+            current += card.probability;
+            if (random <= current)
+            {
+                return card;
+            }
+        }
+
+        return possibleCards[0]; // Fallback to first card (shouldn't happen)
     }
 
     public CardClass DrawCard()
