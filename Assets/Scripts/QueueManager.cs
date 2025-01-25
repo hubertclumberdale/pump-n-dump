@@ -510,4 +510,38 @@ public class QueueManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(HandleCustomerExit());
     }
+
+    public string GetMostCommonMarketInQueue()
+    {
+        Dictionary<string, int> marketCounts = new Dictionary<string, int>();
+        
+        // Count customers for each market
+        foreach (CustomerClass customer in customerQueue)
+        {
+            if (customer.market != null && !customer.isCop)
+            {
+                string marketName = customer.market.marketData.marketName;
+                if (!marketCounts.ContainsKey(marketName))
+                {
+                    marketCounts[marketName] = 0;
+                }
+                marketCounts[marketName]++;
+            }
+        }
+
+        // Find market with highest count
+        string mostCommonMarket = "";
+        int maxCount = -1;
+
+        foreach (var kvp in marketCounts)
+        {
+            if (kvp.Value > maxCount)
+            {
+                maxCount = kvp.Value;
+                mostCommonMarket = kvp.Key;
+            }
+        }
+
+        return mostCommonMarket;
+    }
 }

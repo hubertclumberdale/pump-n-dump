@@ -143,7 +143,7 @@ public class CardClass : MonoBehaviour
 
         string targetMarket = currentCustomer.market.marketData.marketName;
 
-        if (cardData.valueForTarget != 0 && !cardData.affectsBestMarket && !cardData.affectsWorstMarket)
+        if (cardData.valueForTarget != 0 && !cardData.affectsBestMarket && !cardData.affectsWorstMarket && !cardData.affectsMostCommonMarket)
         {
             MarketManager.Instance.ModifyMarketValue(targetMarket, cardData.valueForTarget);
         }
@@ -199,6 +199,25 @@ public class CardClass : MonoBehaviour
         if (cardData.removeCurrentCustomersFromQueue)
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.RemoveCustomersOfMarketFromQueue());
+        }
+
+        if (cardData.affectsMostCommonMarket)
+        {
+            string mostCommonMarket = QueueManager.Instance.GetMostCommonMarketInQueue();
+            if (!string.IsNullOrEmpty(mostCommonMarket))
+            {
+                // Apply target value to most common market
+                MarketManager.Instance.ModifyMarketValue(mostCommonMarket, cardData.valueForTarget);
+
+                // Apply other value to all other markets
+                foreach (MarketClass market in MarketManager.Instance.markets)
+                {
+                    if (market.marketData.marketName != mostCommonMarket)
+                    {
+                        MarketManager.Instance.ModifyMarketValue(market.marketData.marketName, cardData.valueForOthers);
+                    }
+                }
+            }
         }
 
         if(!cardData.shuffleQueue && !cardData.resetQueue && 

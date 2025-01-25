@@ -23,7 +23,7 @@ public class CardScriptable : ScriptableObject
 
     public bool affectsWorstMarket;
     public bool affectsBestMarket;
-
+    public bool affectsMostCommonMarket;
 
     public bool shuffleQueue;
     public bool resetQueue;
