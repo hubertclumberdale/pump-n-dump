@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68024fca259694c91a2e4d724b3a7814, type: 3}
   m_Name: Longest sequence
   m_EditorClassIdentifier: 
-  cardName: Affects Worst Market
-  description: Dai un +5 al peggiore market
+  cardName: Longest sequence
+  description: Calcola la sequenza maggiore. dai 10*5
   probability: 0.5
   color: {r: 0.7647059, g: 0.5372549, b: 0.5794795, a: 1}
   cardSprite: {fileID: -2131019442, guid: 422329838235ca74196c1084e5595658, type: 3}
@@ -21,10 +21,14 @@ MonoBehaviour:
   valueForOthers: 0
   numberOfNextAffectedCustomers: 0
   affectsAllOtherMarketsToo: 0
-  affectsWorstMarket: 1
+  affectsWorstMarket: 0
   affectsBestMarket: 0
+  affectsMostCommonMarket: 0
   shuffleQueue: 0
   resetQueue: 0
   resetHand: 0
+  removeCurrentCustomersFromQueue: 0
   removesCopFromQueue: 0
   movesCopToEndOfQueue: 0
+  affectsLongestMarketSequence: 1
+  valueMultiplierForSequence: 5
