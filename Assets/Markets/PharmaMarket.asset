@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PharmaMarket
   m_EditorClassIdentifier: 
   marketName: PharmaMarket
-  initialValue: 0
+  initialValue: 20
   marketColor: {r: 0.050588, g: 0.7075472, b: 0.01668743, a: 1}
   marketIcon: {fileID: -422024644, guid: e0aa29646ae364b60837fe7d6fab7ee4, type: 3}

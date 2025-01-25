@@ -223,6 +223,9 @@ public class QueueManager : MonoBehaviour
             // Wait for current customer to exit
             yield return StartCoroutine(MoveCustomerToExit(customerToExit));
             
+            // Draw a new card after customer exits
+            PlayerManager.Instance.DrawCard();
+            
             // Small delay before next customer moves
             yield return new WaitForSeconds(0.2f);
             
@@ -340,7 +343,7 @@ public class QueueManager : MonoBehaviour
 
     public IEnumerator RemoveAllCopsFromQueue()
     {
-        // Step 1: Find all cops and move them to exit
+        // Step 1: Find all cops
         List<CustomerClass> customerList = customerQueue.ToList();
         List<CustomerClass> copsToRemove = new List<CustomerClass>();
         List<CustomerClass> remainingCustomers = new List<CustomerClass>();
@@ -358,7 +361,14 @@ public class QueueManager : MonoBehaviour
             }
         }
 
-        // Clear the queue
+        // If no cops found, just handle customer exit normally
+        if (copsToRemove.Count == 0)
+        {
+            yield return StartCoroutine(HandleCustomerExit());
+            yield break;
+        }
+
+        // Continue with cop removal sequence only if cops were found
         customerQueue.Clear();
 
         // Move all cops to exit simultaneously
@@ -367,11 +377,7 @@ public class QueueManager : MonoBehaviour
             StartCoroutine(MoveCustomerToExit(cop));
         }
 
-        // Wait for cops to reach exit
-        if (copsToRemove.Count > 0)
-        {
-            yield return new WaitForSeconds(moveToExitDuration + 0.2f);
-        }
+        yield return new WaitForSeconds(moveToExitDuration + 0.2f);
 
         // Step 2: First realign remaining customers to their proper positions
         List<Sequence> realignSequences = new List<Sequence>();

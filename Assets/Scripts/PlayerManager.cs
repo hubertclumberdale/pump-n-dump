@@ -163,7 +163,6 @@ public class PlayerManager : MonoBehaviour
         if (cardIndex >= 0 && cardIndex < maxHandSize && occupiedPositions[cardIndex])
         {
             CardClass cardToPlay = null;
-            // Find the card with matching index
             foreach (CardClass card in hand)
             {
                 if (card.GetHandIndex() == cardIndex)
@@ -178,7 +177,7 @@ public class PlayerManager : MonoBehaviour
                 hand.Remove(cardToPlay);
                 occupiedPositions[cardIndex] = false;
                 cardToPlay.Play(playedCardPosition);
-                DrawCard();
+                // Remove the DrawCard() call from here
             }
         }
     }
@@ -200,6 +199,32 @@ public class PlayerManager : MonoBehaviour
         {
             occupiedPositions[i] = false;
         }
+    }
+
+    public IEnumerator ResetHand()
+    {
+        // First fade out all cards
+        List<CardClass> cardsToRemove = new List<CardClass>(hand);
+        foreach (var card in cardsToRemove)
+        {
+            if (card != null)
+            {
+                card.FadeOut();
+                yield return new WaitForSeconds(0.2f); // Slight delay between each card fade
+            }
+        }
+
+        // Wait for fade animations
+        yield return new WaitForSeconds(0.5f);
+
+        // Clear the hand
+        FlushHand();    
+
+        // Draw new cards
+        yield return StartCoroutine(DrawInitialHandCoroutine());
+
+        // After drawing new cards, handle customer exit
+        yield return StartCoroutine(QueueManager.Instance.HandleCustomerExit());
     }
 
 }

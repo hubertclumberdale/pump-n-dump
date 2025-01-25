@@ -115,6 +115,20 @@ public class CardClass : MonoBehaviour
         });
     }
 
+    public void FadeOut()
+    {
+        cardButton.interactable = false;
+        Sequence fadeSequence = DOTween.Sequence();
+        
+        // Scale down to zero
+        fadeSequence.Append(transform.DOScale(Vector3.zero, fadeAnimationDuration)
+            .SetEase(Ease.InBack));
+            
+        fadeSequence.OnComplete(() => {
+            Destroy(gameObject);
+        });
+    }
+
     private IEnumerator DestroyAfterEffects()
     {
         // Wait a small amount of time to ensure effects are processed
@@ -157,7 +171,7 @@ public class CardClass : MonoBehaviour
 
         if (cardData.resetHand)
         {
-            // HandManager.Instance.ShuffleHand();
+            PlayerManager.Instance.StartCoroutine(PlayerManager.Instance.ResetHand());
         }
 
         if (cardData.removesCopFromQueue)
@@ -182,7 +196,7 @@ public class CardClass : MonoBehaviour
             MarketManager.Instance.ModifyMarketValue(bestMarketName, cardData.valueForTarget);
         }
 
-        if(!cardData.shuffleQueue && !cardData.resetQueue && !cardData.removesCopFromQueue){
+        if(!cardData.shuffleQueue && !cardData.resetQueue && !cardData.removesCopFromQueue && !cardData.resetHand){
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
         }
     }

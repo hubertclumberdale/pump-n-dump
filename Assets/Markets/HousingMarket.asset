@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: HousingMarket
   m_EditorClassIdentifier: 
   marketName: HousingMarket
-  initialValue: 0
+  initialValue: 20
   marketColor: {r: 0.8773585, g: 0.77690256, b: 0, a: 1}
   marketIcon: {fileID: 2095897160, guid: e0aa29646ae364b60837fe7d6fab7ee4, type: 3}

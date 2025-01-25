@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PornoMarket
   m_EditorClassIdentifier: 
   marketName: PornoMarket
-  initialValue: 0
+  initialValue: 20
   marketColor: {r: 0.6792453, g: 0, b: 0, a: 1}
   marketIcon: {fileID: 1168223647, guid: e0aa29646ae364b60837fe7d6fab7ee4, type: 3}
