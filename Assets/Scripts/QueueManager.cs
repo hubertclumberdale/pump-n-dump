@@ -544,4 +544,50 @@ public class QueueManager : MonoBehaviour
 
         return mostCommonMarket;
     }
+
+    public (string marketName, int sequenceLength) GetLongestMarketSequence()
+    {
+        if (customerQueue.Count == 0) return ("", 0);
+
+        CustomerClass[] customers = customerQueue.ToArray();
+        string currentMarket = "";
+        int currentCount = 0;
+        string longestMarket = "";
+        int maxCount = 0;
+
+        foreach (CustomerClass customer in customers)
+        {
+            if (customer.isCop || customer.market == null) 
+            {
+                // Reset sequence on cops or null markets
+                currentCount = 0;
+                currentMarket = "";
+                continue;
+            }
+
+            string marketName = customer.market.marketData.marketName;
+
+            if (marketName == currentMarket)
+            {
+                currentCount++;
+                if (currentCount > maxCount)
+                {
+                    maxCount = currentCount;
+                    longestMarket = currentMarket;
+                }
+            }
+            else
+            {
+                currentMarket = marketName;
+                currentCount = 1;
+                if (currentCount > maxCount)
+                {
+                    maxCount = currentCount;
+                    longestMarket = currentMarket;
+                }
+            }
+        }
+
+        return (longestMarket, maxCount);
+    }
 }

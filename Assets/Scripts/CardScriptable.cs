@@ -33,4 +33,7 @@ public class CardScriptable : ScriptableObject
 
     public bool removesCopFromQueue;
     public bool movesCopToEndOfQueue;
+
+    public bool affectsLongestMarketSequence;
+    public int valueMultiplierForSequence = 10; // Default multiplier of 10
 }

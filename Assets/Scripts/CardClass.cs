@@ -143,7 +143,7 @@ public class CardClass : MonoBehaviour
 
         string targetMarket = currentCustomer.market.marketData.marketName;
 
-        if (cardData.valueForTarget != 0 && !cardData.affectsBestMarket && !cardData.affectsWorstMarket && !cardData.affectsMostCommonMarket)
+        if (cardData.valueForTarget != 0 && !cardData.affectsBestMarket && !cardData.affectsWorstMarket && !cardData.affectsMostCommonMarket && !cardData.affectsLongestMarketSequence)
         {
             MarketManager.Instance.ModifyMarketValue(targetMarket, cardData.valueForTarget);
         }
@@ -220,9 +220,20 @@ public class CardClass : MonoBehaviour
             }
         }
 
+        if (cardData.affectsLongestMarketSequence)
+        {
+            var (marketName, sequenceLength) = QueueManager.Instance.GetLongestMarketSequence();
+            if (!string.IsNullOrEmpty(marketName) && sequenceLength > 1)
+            {
+                int bonusValue = cardData.valueMultiplierForSequence * sequenceLength;
+                MarketManager.Instance.ModifyMarketValue(marketName, bonusValue);
+            }
+        }
+
         if(!cardData.shuffleQueue && !cardData.resetQueue && 
            !cardData.removesCopFromQueue && !cardData.resetHand && 
-           !cardData.removeCurrentCustomersFromQueue)
+           !cardData.removeCurrentCustomersFromQueue
+           )
         {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
         }
