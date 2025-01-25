@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     private bool isGameRunning = false;
     public bool IsGameOver { get; private set; }
     private bool hasPlayedBefore = false; // Add this to track if it's first time
+    public Sprite playIcon;   // Reference to play icon sprite
+    public Sprite restartIcon; // Reference to restart icon sprite
+    public Image buttonIcon;   // Reference to the button's image component
 
     void Awake()
     {
@@ -108,20 +111,15 @@ public class GameManager : MonoBehaviour
 
     private void UpdateButtonText()
     {
-        TextMeshProUGUI buttonText = playResetButton?.GetComponentInChildren<TextMeshProUGUI>();
-        if (buttonText != null)
+        if (buttonIcon != null)
         {
-            if (!hasPlayedBefore)
+            if (!isGameRunning)
             {
-                buttonText.text = "Start Game";
+                buttonIcon.sprite = playIcon;
             }
-            else if (IsGameOver)
+            else
             {
-                buttonText.text = "Play Again";
-            }
-            else if (isGameRunning)
-            {
-                buttonText.text = "Restart";
+                buttonIcon.sprite = restartIcon;
             }
         }
     }

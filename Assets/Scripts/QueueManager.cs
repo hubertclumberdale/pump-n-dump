@@ -29,7 +29,7 @@ public class QueueManager : MonoBehaviour
     public float distanceBetweenCustomers = 0.65f; // Distance between customers in queue
     public float queueAngle = -11.3f; // Angle of the queue line (in degrees)
 
-    private const int SAFE_POSITIONS = 3;  // Number of initial positions where cops can't spawn
+    public int safePositions = 9;  // Changed from const to public variable
 
     void Start()
     {
@@ -105,7 +105,7 @@ public class QueueManager : MonoBehaviour
             GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
             CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
             
-            if (i < SAFE_POSITIONS)
+            if (i < safePositions)  // Changed from SAFE_POSITIONS to safePositions
             {
                 newCustomer.ForceCivilian();
             }
