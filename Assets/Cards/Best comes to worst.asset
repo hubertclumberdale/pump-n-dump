@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68024fca259694c91a2e4d724b3a7814, type: 3}
+  m_Name: Best comes to worst
+  m_EditorClassIdentifier: 
+  cardName: Best comes to worst
+  description: +40 to worst company
+  probability: 0.1
+  color: {r: 0.6961678, g: 0.22745097, b: 0.73333335, a: 1}
+  cardSprite: {fileID: 21300000, guid: f25dd38bdfb99444dab8004b32db3348, type: 3}
+  valueForTarget: 40
+  valueForOthers: 0
+  numberOfNextAffectedCustomers: 0
+  affectsAllOtherMarketsToo: 0
+  affectsWorstMarket: 1
+  affectsBestMarket: 0
+  affectsMostCommonMarket: 0
+  shuffleQueue: 0
+  resetQueue: 0
+  resetHand: 0
+  removeCurrentCustomersFromQueue: 0
+  removesCopFromQueue: 0
+  movesCopToEndOfQueue: 0
+  affectsLongestMarketSequence: 0
+  valueMultiplierForSequence: 10
