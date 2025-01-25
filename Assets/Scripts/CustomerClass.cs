@@ -17,6 +17,8 @@ public class CustomerClass : MonoBehaviour
     public SpriteRenderer armR;
     public SpriteRenderer armL;
 
+    public SpriteRenderer marketSymbol;
+
     [Header("Body Part Sprite Collections")]
     public Sprite[] headSprites;
     public Sprite[] bodySprites;
@@ -80,6 +82,7 @@ public class CustomerClass : MonoBehaviour
             {
                 Color marketColor = market.marketData.marketColor;
                 ApplyColorToBodyParts(marketColor);
+                marketSymbol.sprite = market.marketData.marketIcon;
             }
         }
         else
