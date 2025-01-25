@@ -45,10 +45,12 @@ public class CustomerClass : MonoBehaviour
         {
             RandomizeBodyParts();
             AssignRandomMarket();
+            marketSymbol.gameObject.SetActive(true);
         }
         else
         {
             market = null; // Cops don't have markets
+            marketSymbol.gameObject.SetActive(false);
             RandomizeBodyParts();
             ApplyColorToBodyParts(copColor);
         }
@@ -106,7 +108,7 @@ public class CustomerClass : MonoBehaviour
     {
         body.color = color;
         legR.color = color;
-        legL.color = color;
+        legL.color = color; 
         armR.color = color;
         armL.color = color;
     }
