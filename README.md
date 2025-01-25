@@ -38,16 +38,7 @@ Il giocatore riceve una carta casuale dal mazzo, avendo sempre 3 carte in mano a
 Giocare una Carta:
 
 Il giocatore sceglie una delle 3 carte in mano e applica il suo effetto sulla persona che ha davanti nella fila. L’effetto influenzerà il valore dell’azienda associata a quella persona (o più aziende, a seconda della carta).
-Carte del Mazzo
-Ecco tutte le carte disponibili nel mazzo e i loro effetti:
 
-Plus: Aumenta il valore dell'azienda della persona davanti di +5.
-Freq: Conta la frequenza delle aziende nelle prossime 9 persone nella fila. Applica un bonus di +10 all'azienda più numerosa e un malus di -10 all'azienda meno numerosa. Dopo l’effetto, la fila viene randomizzata.
-Shuffle: Rimescola le carte in mano del giocatore, randomizza la fila e applica un malus di -5 a tutte le aziende.
-Eggnow: Aumenta immediatamente di +5 il valore dell’azienda della persona davanti, ma applica un malus di -10 alla stessa azienda dopo 3 turni.
-Party: Aumenta di +5 il valore di tutte le aziende.
-Leech: Aumenta di +20 il valore dell’azienda della persona davanti, ma applica un malus di -5 a tutte le altre aziende.
-Fine della Partita
 La partita termina immediatamente quando si verifica una delle seguenti condizioni:
 
 Vittoria: L'azienda del giocatore raggiunge 100 punti.
@@ -56,18 +47,3 @@ L'azienda del giocatore scende a 0 punti.
 Un’altra azienda (non del giocatore) raggiunge 100 punti.
 Lo Sbirro raggiunge la posizione del giocatore nella fila.
 Un’azienda (diversa da quella del giocatore) scende a 0 punti, causando l’eliminazione di quell’azienda. Se ciò rende impossibile vincere, il giocatore perde.
-Strategie di Gioco
-Gestire lo Sbirro:
-
-Usa Freq o Shuffle per spostare o randomizzare la fila.
-Pianifica in anticipo sfruttando la visione delle prossime 9 persone.
-Massimizzare l’azienda del giocatore:
-
-Usa carte come Plus, Party o Leech per aumentare rapidamente i valori.
-Fai attenzione agli effetti collaterali delle carte (ad esempio, Eggnow o Leech).
-Eliminare le aziende avversarie:
-
-Usa carte con malus, come Shuffle, per abbassare i valori delle aziende concorrenti.
-Monitorare la fila:
-
-Osserva sempre la distribuzione delle aziende e la posizione dello Sbirro per pianificare al meglio i turni futuri.
