@@ -25,6 +25,9 @@ public class QueueManager : MonoBehaviour
     public int jumpsPerSecond = 4; // New variable to control jump frequency
 
     public Transform handPosition;
+    public Transform waitPoint; // Reference point for queue positioning
+    public float distanceBetweenCustomers = 0.65f; // Distance between customers in queue
+    public float queueAngle = -11.3f; // Angle of the queue line (in degrees)
 
     private const int SAFE_POSITIONS = 3;  // Number of initial positions where cops can't spawn
 
@@ -77,13 +80,24 @@ public class QueueManager : MonoBehaviour
         if (!isQueueInitialized) return;
     }
 
+    // New method to calculate position based on steps from wait point
+    private Vector3 GetPositionFromWaitPoint(int steps)
+    {
+        float angle = queueAngle * Mathf.Deg2Rad; // Convert to radians
+        Vector3 offset = new Vector3(
+            Mathf.Cos(angle) * distanceBetweenCustomers * steps,
+            0,
+            Mathf.Sin(angle) * distanceBetweenCustomers * steps
+        );
+        return waitPoint.position - offset;
+    }
+
     // Inizializza la fila con persone casuali
     IEnumerator InitializeQueue()
     {
         customerQueue = new Queue<CustomerClass>();
         isQueueInitialized = false;
 
-        // Create and position all customers at once
         for (int i = 0; i < queueSize; i++)
         {
             GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
@@ -97,40 +111,39 @@ public class QueueManager : MonoBehaviour
             
             customerQueue.Enqueue(newCustomer);
 
-            Vector3 targetPos = GetQueuePosition(queueSize - 1 - i);  // Position from back to front
-            
-            Sequence moveSequence = DOTween.Sequence();
-            moveSequence.Append(newCustomer.transform.DOMove(targetPos, moveToPlayDuration)
-                .SetEase(Ease.Linear));
-
-            // Add jumping effect
-            int totalJumps = Mathf.FloorToInt(moveToPlayDuration * jumpsPerSecond);
-            float jumpDuration = moveToPlayDuration / totalJumps;
-
-            for (int j = 0; j < totalJumps; j++)
-            {
-                moveSequence.Join(newCustomer.transform.DOMoveY(
-                    newCustomer.transform.position.y + jumpHeight,
-                    jumpDuration * 0.5f)
-                    .SetLoops(2, LoopType.Yoyo)
-                    .SetEase(Ease.OutQuad)
-                    .SetDelay(j * jumpDuration));
-            }
-
-            yield return new WaitForSeconds(0.2f); // Small delay between each customer's start
+            Vector3 targetPos = GetPositionFromWaitPoint(i);
+            yield return StartCoroutine(MoveCustomerWithJumps(newCustomer, targetPos));
+            yield return new WaitForSeconds(0.1f);
         }
 
-        yield return new WaitForSeconds(moveToPlayDuration); // Wait for all movements to complete
         isQueueInitialized = true;
-        
-        // Automatically move first customer after queue initialization
-        yield return new WaitForSeconds(0.5f); // Small delay for better visual flow
+        yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(MoveCustomerToPlayPosition());
     }
 
-    private Vector3 GetQueuePosition(int positionFromFront)
+    // New method for moving customer with jumps
+    private IEnumerator MoveCustomerWithJumps(CustomerClass customer, Vector3 targetPosition)
     {
-        return spawnPoint.position + new Vector3(0.65f * (positionFromFront + 1), 0, -0.2f * (positionFromFront + 1));
+        Sequence moveSequence = DOTween.Sequence();
+        
+        // Base movement
+        moveSequence.Append(customer.transform.DOMove(targetPosition, moveToPlayDuration)
+            .SetEase(Ease.Linear));
+        
+        int totalJumps = Mathf.FloorToInt(moveToPlayDuration * jumpsPerSecond);
+        float jumpDuration = moveToPlayDuration / totalJumps;
+
+        for (int i = 0; i < totalJumps; i++)
+        {
+            moveSequence.Join(customer.transform.DOMoveY(
+                customer.transform.position.y + jumpHeight,
+                jumpDuration * 0.5f)
+                .SetLoops(2, LoopType.Yoyo)
+                .SetEase(Ease.OutQuad)
+                .SetDelay(i * jumpDuration));
+        }
+
+        yield return moveSequence.WaitForCompletion();
     }
 
     // Aggiunge una persona casuale alla fine della fila
@@ -144,23 +157,15 @@ public class QueueManager : MonoBehaviour
     // Avanza la fila di una posizione
     public IEnumerator AdvanceQueue()
     {
-        // Convert queue to array to avoid modification issues during iteration
-        CustomerClass[] customersToMove = customerQueue.ToArray();
-        
-        foreach (CustomerClass customer in customersToMove)
+        CustomerClass[] customers = customerQueue.ToArray();
+        List<Sequence> moveSequences = new List<Sequence>();
+
+        for (int i = 0; i < customers.Length; i++)
         {
-            if (customer != null && customer.gameObject != null)  // Add null check for safety
+            if (customers[i] != null && customers[i].gameObject != null)
             {
-                Vector3 currentPos = customer.transform.position;
-                Vector3 targetPos = currentPos + new Vector3(0.65f, 0, -0.2f);
-
-                Sequence moveSequence = DOTween.Sequence();
-                moveSequence.Append(customer.transform.DOMove(targetPos, animationDuration))
-                           .Join(customer.transform.DOMoveY(currentPos.y + 0.1f, animationDuration * 0.5f)
-                                .SetEase(Ease.OutQuad)
-                                .SetLoops(2, LoopType.Yoyo));
-
-                yield return moveSequence.WaitForCompletion();
+                Vector3 targetPos = GetPositionFromWaitPoint(i);
+                yield return StartCoroutine(MoveCustomerWithJumps(customers[i], targetPos));
             }
         }
     }
@@ -283,34 +288,13 @@ public class QueueManager : MonoBehaviour
         }
 
         // Reposition all customers
-        CustomerClass[] customers = customerQueue.ToArray();
-        for (int i = 0; i < customers.Length; i++)
+        for (int i = 0; i < customerList.Count; i++)
         {
-            Vector3 newPosition = GetQueuePosition(customers.Length - 1 - i);
-            
-            Sequence moveSequence = DOTween.Sequence();
-            
-            // Jump up
-            moveSequence.Append(customers[i].transform.DOMoveY(
-                customers[i].transform.position.y + 0.5f, 0.3f)
-                .SetEase(Ease.OutQuad));
-            
-            // Move to new position
-            moveSequence.Append(customers[i].transform.DOMove(newPosition, 0.5f)
-                .SetEase(Ease.InOutQuad));
-            
-            // Land down
-            moveSequence.Append(customers[i].transform.DOMoveY(
-                newPosition.y, 0.3f)
-                .SetEase(Ease.InQuad));
-            
-            yield return new WaitForSeconds(0.1f);
+            Vector3 newPosition = GetPositionFromWaitPoint(i);
+            yield return StartCoroutine(MoveCustomerWithJumps(customerList[i], newPosition));
         }
 
-        // Wait a bit after shuffle completes
         yield return new WaitForSeconds(0.5f);
-        
-        // Now handle the customer exit and next customer
         yield return StartCoroutine(HandleCustomerExit());
     }
 
@@ -380,7 +364,7 @@ public class QueueManager : MonoBehaviour
         {
             CustomerClass customer = remainingCustomers[i];
             customerQueue.Enqueue(customer);
-            Vector3 newPosition = GetQueuePosition(remainingCustomers.Count - 1 - i);
+            Vector3 newPosition = GetPositionFromWaitPoint(i);
             
             Sequence moveSequence = DOTween.Sequence();
             moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
@@ -471,7 +455,7 @@ public class QueueManager : MonoBehaviour
         {
             CustomerClass customer = remainingCustomers[i];
             customerQueue.Enqueue(customer);
-            Vector3 newPosition = GetQueuePosition(remainingCustomers.Count - 1 - i);
+            Vector3 newPosition = GetPositionFromWaitPoint(i);
             
             Sequence moveSequence = DOTween.Sequence();
             moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
