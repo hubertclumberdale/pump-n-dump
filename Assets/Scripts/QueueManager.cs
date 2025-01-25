@@ -97,32 +97,47 @@ public class QueueManager : MonoBehaviour
     {
         customerQueue = new Queue<CustomerClass>();
         isQueueInitialized = false;
+        List<CustomerClass> allCustomers = new List<CustomerClass>();
 
+        // Create all customers at once
         for (int i = 0; i < queueSize; i++)
         {
             GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
             CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
             
-            // Force non-cop for first SAFE_POSITIONS
             if (i < SAFE_POSITIONS)
             {
                 newCustomer.ForceCivilian();
             }
             
             customerQueue.Enqueue(newCustomer);
-
-            Vector3 targetPos = GetPositionFromWaitPoint(i);
-            yield return StartCoroutine(MoveCustomerWithJumps(newCustomer, targetPos));
-            yield return new WaitForSeconds(0.1f);
+            allCustomers.Add(newCustomer);
         }
+
+        // Move all customers simultaneously
+        List<Sequence> moveSequences = new List<Sequence>();
+        for (int i = 0; i < allCustomers.Count; i++)
+        {
+            Vector3 targetPos = GetPositionFromWaitPoint(i);
+            moveSequences.Add(CreateMoveSequence(allCustomers[i], targetPos));
+        }
+
+        // Start all sequences simultaneously
+        foreach (var seq in moveSequences)
+        {
+            seq.Play();
+        }
+
+        // Wait for the longest sequence to complete
+        yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
 
         isQueueInitialized = true;
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(MoveCustomerToPlayPosition());
     }
 
-    // New method for moving customer with jumps
-    private IEnumerator MoveCustomerWithJumps(CustomerClass customer, Vector3 targetPosition)
+    // New helper method to create move sequence
+    private Sequence CreateMoveSequence(CustomerClass customer, Vector3 targetPosition)
     {
         Sequence moveSequence = DOTween.Sequence();
         
@@ -143,7 +158,7 @@ public class QueueManager : MonoBehaviour
                 .SetDelay(i * jumpDuration));
         }
 
-        yield return moveSequence.WaitForCompletion();
+        return moveSequence;
     }
 
     // Aggiunge una persona casuale alla fine della fila
@@ -165,9 +180,18 @@ public class QueueManager : MonoBehaviour
             if (customers[i] != null && customers[i].gameObject != null)
             {
                 Vector3 targetPos = GetPositionFromWaitPoint(i);
-                yield return StartCoroutine(MoveCustomerWithJumps(customers[i], targetPos));
+                moveSequences.Add(CreateMoveSequence(customers[i], targetPos));
             }
         }
+
+        // Start all sequences simultaneously
+        foreach (var seq in moveSequences)
+        {
+            seq.Play();
+        }
+
+        // Wait for all movements to complete
+        yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
     }
 
     public IEnumerator MoveCustomerToPlayPosition() // Renamed back from MoveCustomerToCombatPosition
@@ -268,7 +292,6 @@ public class QueueManager : MonoBehaviour
     {
         if (customerQueue.Count <= 1) yield break;
 
-        // Convert queue to list for shuffling
         List<CustomerClass> customerList = customerQueue.ToList();
         
         // Fisher-Yates shuffle
@@ -280,21 +303,23 @@ public class QueueManager : MonoBehaviour
             customerList[randomIndex] = temp;
         }
 
-        // Clear and refill queue
         customerQueue.Clear();
-        foreach (CustomerClass customer in customerList)
-        {
-            customerQueue.Enqueue(customer);
-        }
+        List<Sequence> moveSequences = new List<Sequence>();
 
-        // Reposition all customers
         for (int i = 0; i < customerList.Count; i++)
         {
+            customerQueue.Enqueue(customerList[i]);
             Vector3 newPosition = GetPositionFromWaitPoint(i);
-            yield return StartCoroutine(MoveCustomerWithJumps(customerList[i], newPosition));
+            moveSequences.Add(CreateMoveSequence(customerList[i], newPosition));
         }
 
-        yield return new WaitForSeconds(0.5f);
+        // Start all sequences simultaneously
+        foreach (var seq in moveSequences)
+        {
+            seq.Play();
+        }
+
+        yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         yield return StartCoroutine(HandleCustomerExit());
     }
 
