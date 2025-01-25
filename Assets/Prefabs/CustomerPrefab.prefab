@@ -132,6 +132,8 @@ MonoBehaviour:
   - {fileID: 804712688, guid: d8ed52489d5054f4294de1a46228b26e, type: 3}
   - {fileID: 1033667130, guid: 8009f46dbf7062648988a1f9d3066be6, type: 3}
   - {fileID: 314426854, guid: 8009f46dbf7062648988a1f9d3066be6, type: 3}
+  - {fileID: 21300000, guid: 6c3501dae6f248b42998eeae819b860e, type: 3}
+  - {fileID: 21300000, guid: 9b0668b708ab8fb49925a264e13612ce, type: 3}
   bodySprites:
   - {fileID: 1974025378, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
   - {fileID: -2071256961, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
