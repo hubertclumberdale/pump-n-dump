@@ -373,7 +373,8 @@ public class QueueManager : MonoBehaviour
             yield return new WaitForSeconds(moveToExitDuration + 0.2f);
         }
 
-        // Step 2: Realign remaining customers
+        // Step 2: First realign remaining customers to their proper positions
+        List<Sequence> realignSequences = new List<Sequence>();
         for (int i = 0; i < remainingCustomers.Count; i++)
         {
             CustomerClass customer = remainingCustomers[i];
@@ -383,25 +384,30 @@ public class QueueManager : MonoBehaviour
             Sequence moveSequence = DOTween.Sequence();
             moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
                 .SetEase(Ease.InOutQuad));
+            realignSequences.Add(moveSequence);
         }
 
-        // Wait for realignment
-        yield return new WaitForSeconds(0.5f);
+        // Wait for realignment to complete
+        foreach (Sequence seq in realignSequences)
+        {
+            yield return seq.WaitForCompletion();
+        }
+        yield return new WaitForSeconds(0.2f);
 
-        // Step 3: Spawn new customers to fill the queue
+        // Step 3: Advance the queue after realignment
+        yield return StartCoroutine(AdvanceQueue());
+        yield return new WaitForSeconds(0.2f);
+
+        // Step 4: Spawn new customers to fill the queue
         int customersToAdd = queueSize - remainingCustomers.Count;
         for (int i = 0; i < customersToAdd; i++)
         {
             GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
             CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
             customerQueue.Enqueue(newCustomer);
-
-            Vector3 targetPos = GetQueuePosition(customersToAdd - 1 - i);
             
-            Sequence spawnSequence = DOTween.Sequence();
-            spawnSequence.Append(newCustomer.transform.DOMove(targetPos, 0.5f)
-                .SetEase(Ease.OutQuad));
-
+            // Wait for queue to advance with new customer
+            yield return StartCoroutine(AdvanceQueue());
             yield return new WaitForSeconds(0.2f);
         }
 
