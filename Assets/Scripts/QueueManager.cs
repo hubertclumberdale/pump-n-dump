@@ -412,22 +412,19 @@ public class QueueManager : MonoBehaviour
             
             if (NeedsRepositioning(customer, newPosition))
             {
-                Sequence moveSequence = DOTween.Sequence();
-                moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
-                    .SetEase(Ease.InOutQuad));
-                realignSequences.Add(moveSequence);
+                realignSequences.Add(CreateMoveSequence(customer, newPosition));
                 anyMovement = true;
             }
         }
 
-        // Wait for realignment to complete
+        // Start all sequences simultaneously
         if (anyMovement)
         {
-            foreach (Sequence seq in realignSequences)
+            foreach (var seq in realignSequences)
             {
-                yield return seq.WaitForCompletion();
+                seq.Play();
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         }
 
         // Step 3: Advance the queue after realignment
@@ -511,22 +508,19 @@ public class QueueManager : MonoBehaviour
             
             if (NeedsRepositioning(customer, newPosition))
             {
-                Sequence moveSequence = DOTween.Sequence();
-                moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
-                    .SetEase(Ease.InOutQuad));
-                realignSequences.Add(moveSequence);
+                realignSequences.Add(CreateMoveSequence(customer, newPosition));
                 anyMovement = true;
             }
         }
 
-        // Wait for realignment to complete
+        // Start all sequences simultaneously
         if (anyMovement)
         {
-            foreach (Sequence seq in realignSequences)
+            foreach (var seq in realignSequences)
             {
-                yield return seq.WaitForCompletion();
+                seq.Play();
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         }
 
         // Step 3: Advance the queue after realignment
