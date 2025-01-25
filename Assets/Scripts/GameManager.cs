@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
     public TextMeshProUGUI statusText;  // Add reference to status text
     private bool isGameRunning = false;
     public bool IsGameOver { get; private set; }
+    private bool hasPlayedBefore = false; // Add this to track if it's first time
 
     void Awake()
     {
@@ -110,12 +111,18 @@ public class GameManager : MonoBehaviour
         TextMeshProUGUI buttonText = playResetButton?.GetComponentInChildren<TextMeshProUGUI>();
         if (buttonText != null)
         {
-            buttonText.text = isGameRunning ? "Reset" : "Play Again";
-            Debug.Log($"Button text updated to: {buttonText.text}");
-        }
-        else
-        {
-            Debug.LogError("TextMeshProUGUI component not found in button children!");
+            if (!hasPlayedBefore)
+            {
+                buttonText.text = "Start Game";
+            }
+            else if (IsGameOver)
+            {
+                buttonText.text = "Play Again";
+            }
+            else if (isGameRunning)
+            {
+                buttonText.text = "Restart";
+            }
         }
     }
 
@@ -128,6 +135,7 @@ public class GameManager : MonoBehaviour
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();
         PlayerManager.Instance.Initialize();
+        hasPlayedBefore = true; // Set this when game starts for the first time
     }
 
     private void ResetGame()
