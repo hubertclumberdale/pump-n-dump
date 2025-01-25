@@ -17,6 +17,7 @@ public class PlayerManager : MonoBehaviour
     private bool isDrawing = false;
     public Transform playedCardPosition; // Add this field
     private bool[] occupiedPositions; // Track which positions are taken
+    private bool hasPlayedCardThisTurn = false;
 
     public MarketClass targetMarket; // The market the player needs to pump
     public Image targetMarketIcon; // Only keep the icon
@@ -52,12 +53,14 @@ public class PlayerManager : MonoBehaviour
 
     public void Initialize()
     {
+        hasPlayedCardThisTurn = false;
         AssignRandomTargetMarket();
         StartCoroutine(DrawInitialHandCoroutine());
     }
 
     public void Reset()
     {
+        hasPlayedCardThisTurn = false;
         FlushHand();
         targetMarket = null;
         UpdateTargetMarketUI();
@@ -153,7 +156,7 @@ public class PlayerManager : MonoBehaviour
 
     public bool CanPlayCards()
     {
-        return QueueManager.Instance.currentPlayingCustomer != null;
+        return QueueManager.Instance.currentPlayingCustomer != null && !hasPlayedCardThisTurn;
     }
 
     public void PlayCard(int cardIndex)
@@ -177,9 +180,14 @@ public class PlayerManager : MonoBehaviour
                 hand.Remove(cardToPlay);
                 occupiedPositions[cardIndex] = false;
                 cardToPlay.Play(playedCardPosition);
-                // Remove the DrawCard() call from here
+                hasPlayedCardThisTurn = true;
             }
         }
+    }
+
+    public void OnCustomerExited()
+    {
+        hasPlayedCardThisTurn = false;
     }
 
     public void FlushHand()

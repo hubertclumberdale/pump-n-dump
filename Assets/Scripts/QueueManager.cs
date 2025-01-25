@@ -220,16 +220,11 @@ public class QueueManager : MonoBehaviour
             currentPlayingCustomer = null;
             customerAtPlayPosition = false;
 
-            // Wait for current customer to exit
             yield return StartCoroutine(MoveCustomerToExit(customerToExit));
-            
-            // Draw a new card after customer exits
+            PlayerManager.Instance.OnCustomerExited();  // Reset the flag
             PlayerManager.Instance.DrawCard();
-            
-            // Small delay before next customer moves
             yield return new WaitForSeconds(0.2f);
             
-            // Move next customer to play position
             if (customerQueue.Count > 0)
             {
                 yield return StartCoroutine(MoveCustomerToPlayPosition());
