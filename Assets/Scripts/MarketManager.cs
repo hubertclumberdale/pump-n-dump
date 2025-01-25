@@ -71,17 +71,17 @@ public class MarketManager : MonoBehaviour
     public void ModifyMarketValue(string marketName, int amount)
     {
         MarketClass market = markets.Find(m => m.marketData.marketName == marketName);
-        if (market != null)
+        if (market == null)
         {
-            market.marketValue += amount;
-            market.marketValue = Mathf.Clamp(market.marketValue, 0, 100);
-            market.UpdateUI();
-            CheckMarketStatus(market);
+            // Market no longer exists, ignore modification
+            Debug.Log($"Attempted to modify non-existent market: {marketName}");
+            return;
         }
-        else
-        {
-            Debug.LogWarning($"Market {marketName} not found!");
-        }
+
+        market.marketValue += amount;
+        market.marketValue = Mathf.Clamp(market.marketValue, 0, 100);
+        market.UpdateUI();
+        CheckMarketStatus(market);
     }
 
     // Metodo per controllare lo stato di un mercato (es. se arriva a 0 o 100)
@@ -90,7 +90,15 @@ public class MarketManager : MonoBehaviour
         if (market.marketValue <= 0)
         {
             market.marketValue = 0;  // Ensure it's exactly 0
-            RemoveMarket(market);
+            // Check if it's the target market
+            if (PlayerManager.Instance.IsTargetMarket(market.marketData.marketName))
+            {
+                GameManager.Instance.LoseGame(market.marketData.marketName);
+            }
+            else
+            {
+                RemoveMarket(market);
+            }
         }
         else if (market.marketValue >= 100)
         {
@@ -101,23 +109,14 @@ public class MarketManager : MonoBehaviour
 
     public void RemoveMarket(MarketClass market)
     {
-        // Don't remove if it's the last market
-        if (markets.Count <= 1)
+        // Don't remove if it's the last market or target market
+        if (markets.Count <= 1 || PlayerManager.Instance.IsTargetMarket(market.marketData.marketName))
         {
             GameManager.Instance.LoseGame(market.marketData.marketName);
             return;
         }
 
-        // If this was the target market, assign a new one
-        if (PlayerManager.Instance.IsTargetMarket(market.marketData.marketName))
-        {
-            markets.Remove(market);
-            PlayerManager.Instance.AssignNewTargetMarket();
-        }
-        else
-        {
-            markets.Remove(market);
-        }
+        markets.Remove(market);
 
         // Start coroutine to remove customers with this market
         StartCoroutine(QueueManager.Instance.RemoveCustomersOfFailedMarket(market.marketData.marketName));
@@ -137,13 +136,14 @@ public class MarketManager : MonoBehaviour
 
     public MarketClass GetWorstMarket()
     {
-        if (markets == null || markets.Count == 0)
+        var activeMarkets = markets.FindAll(m => m != null && m.gameObject != null && m.marketValue > 0);
+        if (activeMarkets == null || activeMarkets.Count == 0)
             return null;
 
-        MarketClass worstMarket = markets[0];
+        MarketClass worstMarket = activeMarkets[0];
         float lowestValue = worstMarket.marketValue;
 
-        foreach (MarketClass market in markets)
+        foreach (MarketClass market in activeMarkets)
         {
             if (market.marketValue < lowestValue)
             {
@@ -157,13 +157,14 @@ public class MarketManager : MonoBehaviour
 
     public MarketClass GetBestMarket()
     {
-        if (markets == null || markets.Count == 0)
+        var activeMarkets = markets.FindAll(m => m != null && m.gameObject != null && m.marketValue > 0);
+        if (activeMarkets == null || activeMarkets.Count == 0)
             return null;
 
-        MarketClass bestMarket = markets[0];
+        MarketClass bestMarket = activeMarkets[0];
         float highestValue = bestMarket.marketValue;
 
-        foreach (MarketClass market in markets)
+        foreach (MarketClass market in activeMarkets)
         {
             if (market.marketValue > highestValue)
             {
@@ -177,13 +178,14 @@ public class MarketManager : MonoBehaviour
 
     public MarketClass AssignRandomMarket()
     {
-        if (markets == null || markets.Count == 0)
+        var activeMarkets = markets.FindAll(m => m != null && m.gameObject != null && m.marketValue > 0);
+        if (activeMarkets == null || activeMarkets.Count == 0)
         {
-            Debug.LogError("No markets available to assign!");
+            Debug.LogError("No active markets available to assign!");
             return null;
         }
 
-        int randomIndex = Random.Range(0, markets.Count);
-        return markets[randomIndex];
+        int randomIndex = Random.Range(0, activeMarkets.Count);
+        return activeMarkets[randomIndex];
     }
 }
