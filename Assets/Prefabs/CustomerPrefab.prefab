@@ -110,6 +110,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   market: {fileID: 0}
   isCop: 0
+  copColor: {r: 0, g: 0, b: 1, a: 1}
   head: {fileID: 8634716275807357782}
   body: {fileID: 8326607412851733216}
   legR: {fileID: 2935836801038016863}
@@ -147,6 +148,14 @@ MonoBehaviour:
   - {fileID: -1951324987, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
   - {fileID: -406682561, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
   - {fileID: -1959346416, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
+  copHeadSprites:
+  - {fileID: -617519778, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
+  copBodySprites:
+  - {fileID: 1974025378, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
+  copLegSprites:
+  - {fileID: -439481511, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
+  copArmSprites:
+  - {fileID: 73013736, guid: 530598bb009fdca409d013f04cb6aa62, type: 3}
 --- !u!95 &6522390197607420300
 Animator:
   serializedVersion: 7

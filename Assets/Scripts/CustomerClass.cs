@@ -6,7 +6,7 @@ public class CustomerClass : MonoBehaviour
     [Range(0f, 1f)]
     public static float copChance = 0.08f;  // 5% chance to be a cop, shared by all customers
     public bool isCop = false;
-    private Color copColor = Color.blue;  // Or whatever color you want for cops
+    public Color copColor = Color.blue;  // Made public to be configurable in inspector
     private bool forceNoCop = false;
 
     [Header("Body Part Renderers")]
@@ -24,6 +24,12 @@ public class CustomerClass : MonoBehaviour
     public Sprite[] bodySprites;
     public Sprite[] legSprites;
     public Sprite[] armSprites;
+
+    [Header("Cop Body Part Sprite Collections")]
+    public Sprite[] copHeadSprites;
+    public Sprite[] copBodySprites;
+    public Sprite[] copLegSprites;
+    public Sprite[] copArmSprites;
 
     public void ForceCivilian()
     {
@@ -50,22 +56,27 @@ public class CustomerClass : MonoBehaviour
 
     private void RandomizeBodyParts()
     {
-        if (headSprites.Length > 0)
-            head.sprite = headSprites[Random.Range(0, headSprites.Length)];
+        Sprite[] currentHeadSprites = isCop ? copHeadSprites : headSprites;
+        Sprite[] currentBodySprites = isCop ? copBodySprites : bodySprites;
+        Sprite[] currentLegSprites = isCop ? copLegSprites : legSprites;
+        Sprite[] currentArmSprites = isCop ? copArmSprites : armSprites;
 
-        if (bodySprites.Length > 0)
-            body.sprite = bodySprites[Random.Range(0, bodySprites.Length)];
+        if (currentHeadSprites.Length > 0)
+            head.sprite = currentHeadSprites[Random.Range(0, currentHeadSprites.Length)];
 
-        if (legSprites.Length > 0)
+        if (currentBodySprites.Length > 0)
+            body.sprite = currentBodySprites[Random.Range(0, currentBodySprites.Length)];
+
+        if (currentLegSprites.Length > 0)
         {
-            Sprite selectedLeg = legSprites[Random.Range(0, legSprites.Length)];
+            Sprite selectedLeg = currentLegSprites[Random.Range(0, currentLegSprites.Length)];
             legR.sprite = selectedLeg;
             legL.sprite = selectedLeg;
         }
 
-        if (armSprites.Length > 0)
+        if (currentArmSprites.Length > 0)
         {
-            Sprite selectedArm = armSprites[Random.Range(0, armSprites.Length)];
+            Sprite selectedArm = currentArmSprites[Random.Range(0, currentArmSprites.Length)];
             armR.sprite = selectedArm;
             armL.sprite = selectedArm;
         }
