@@ -169,29 +169,40 @@ public class QueueManager : MonoBehaviour
         customerQueue.Enqueue(newCustomer);
     }
 
+    // Add this helper method to check if customer needs to move
+    private bool NeedsRepositioning(CustomerClass customer, Vector3 targetPosition)
+    {
+        return Vector3.Distance(customer.transform.position, targetPosition) > 0.01f;
+    }
+
     // Avanza la fila di una posizione
     public IEnumerator AdvanceQueue()
     {
         CustomerClass[] customers = customerQueue.ToArray();
         List<Sequence> moveSequences = new List<Sequence>();
+        bool anyMovement = false;
 
         for (int i = 0; i < customers.Length; i++)
         {
             if (customers[i] != null && customers[i].gameObject != null)
             {
                 Vector3 targetPos = GetPositionFromWaitPoint(i);
-                moveSequences.Add(CreateMoveSequence(customers[i], targetPos));
+                if (NeedsRepositioning(customers[i], targetPos))
+                {
+                    moveSequences.Add(CreateMoveSequence(customers[i], targetPos));
+                    anyMovement = true;
+                }
             }
         }
 
-        // Start all sequences simultaneously
-        foreach (var seq in moveSequences)
+        if (anyMovement)
         {
-            seq.Play();
+            foreach (var seq in moveSequences)
+            {
+                seq.Play();
+            }
+            yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         }
-
-        // Wait for all movements to complete
-        yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
     }
 
     public IEnumerator MoveCustomerToPlayPosition() // Renamed back from MoveCustomerToCombatPosition
@@ -305,21 +316,28 @@ public class QueueManager : MonoBehaviour
 
         customerQueue.Clear();
         List<Sequence> moveSequences = new List<Sequence>();
+        bool anyMovement = false;
 
         for (int i = 0; i < customerList.Count; i++)
         {
             customerQueue.Enqueue(customerList[i]);
             Vector3 newPosition = GetPositionFromWaitPoint(i);
-            moveSequences.Add(CreateMoveSequence(customerList[i], newPosition));
+            if (NeedsRepositioning(customerList[i], newPosition))
+            {
+                moveSequences.Add(CreateMoveSequence(customerList[i], newPosition));
+                anyMovement = true;
+            }
         }
 
-        // Start all sequences simultaneously
-        foreach (var seq in moveSequences)
+        if (anyMovement)
         {
-            seq.Play();
+            foreach (var seq in moveSequences)
+            {
+                seq.Play();
+            }
+            yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         }
-
-        yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
+        
         yield return StartCoroutine(HandleCustomerExit());
     }
 
@@ -385,24 +403,32 @@ public class QueueManager : MonoBehaviour
 
         // Step 2: First realign remaining customers to their proper positions
         List<Sequence> realignSequences = new List<Sequence>();
+        bool anyMovement = false;
         for (int i = 0; i < remainingCustomers.Count; i++)
         {
             CustomerClass customer = remainingCustomers[i];
             customerQueue.Enqueue(customer);
             Vector3 newPosition = GetPositionFromWaitPoint(i);
             
-            Sequence moveSequence = DOTween.Sequence();
-            moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
-                .SetEase(Ease.InOutQuad));
-            realignSequences.Add(moveSequence);
+            if (NeedsRepositioning(customer, newPosition))
+            {
+                Sequence moveSequence = DOTween.Sequence();
+                moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
+                    .SetEase(Ease.InOutQuad));
+                realignSequences.Add(moveSequence);
+                anyMovement = true;
+            }
         }
 
         // Wait for realignment to complete
-        foreach (Sequence seq in realignSequences)
+        if (anyMovement)
         {
-            yield return seq.WaitForCompletion();
+            foreach (Sequence seq in realignSequences)
+            {
+                yield return seq.WaitForCompletion();
+            }
+            yield return new WaitForSeconds(0.2f);
         }
-        yield return new WaitForSeconds(0.2f);
 
         // Step 3: Advance the queue after realignment
         yield return StartCoroutine(AdvanceQueue());
@@ -476,24 +502,32 @@ public class QueueManager : MonoBehaviour
 
         // Step 2: First realign remaining customers to their proper positions
         List<Sequence> realignSequences = new List<Sequence>();
+        bool anyMovement = false;
         for (int i = 0; i < remainingCustomers.Count; i++)
         {
             CustomerClass customer = remainingCustomers[i];
             customerQueue.Enqueue(customer);
             Vector3 newPosition = GetPositionFromWaitPoint(i);
             
-            Sequence moveSequence = DOTween.Sequence();
-            moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
-                .SetEase(Ease.InOutQuad));
-            realignSequences.Add(moveSequence);
+            if (NeedsRepositioning(customer, newPosition))
+            {
+                Sequence moveSequence = DOTween.Sequence();
+                moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
+                    .SetEase(Ease.InOutQuad));
+                realignSequences.Add(moveSequence);
+                anyMovement = true;
+            }
         }
 
         // Wait for realignment to complete
-        foreach (Sequence seq in realignSequences)
+        if (anyMovement)
         {
-            yield return seq.WaitForCompletion();
+            foreach (Sequence seq in realignSequences)
+            {
+                yield return seq.WaitForCompletion();
+            }
+            yield return new WaitForSeconds(0.2f);
         }
-        yield return new WaitForSeconds(0.2f);
 
         // Step 3: Advance the queue after realignment
         yield return StartCoroutine(AdvanceQueue());
