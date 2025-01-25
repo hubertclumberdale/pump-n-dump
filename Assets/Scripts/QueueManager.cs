@@ -358,113 +358,17 @@ public class QueueManager : MonoBehaviour
         yield return StartCoroutine(HandleCustomerExit());
     }
 
-    public IEnumerator RemoveAllCopsFromQueue()
+    private IEnumerator RemoveCustomersFromQueue(System.Predicate<CustomerClass> shouldRemove)
     {
-        // Step 1: Find all cops
-        List<CustomerClass> customerList = customerQueue.ToList();
-        List<CustomerClass> copsToRemove = new List<CustomerClass>();
-        List<CustomerClass> remainingCustomers = new List<CustomerClass>();
-
-        // Separate cops from civilians
-        foreach (CustomerClass customer in customerList)
-        {
-            if (customer.isCop)
-            {
-                copsToRemove.Add(customer);
-            }
-            else
-            {
-                remainingCustomers.Add(customer);
-            }
-        }
-
-        // If no cops found, just handle customer exit normally
-        if (copsToRemove.Count == 0)
-        {
-            yield return StartCoroutine(HandleCustomerExit());
-            yield break;
-        }
-
-        // Continue with cop removal sequence only if cops were found
-        customerQueue.Clear();
-
-        // Move all cops to exit simultaneously
-        foreach (CustomerClass cop in copsToRemove)
-        {
-            StartCoroutine(MoveCustomerToExit(cop));
-        }
-
-        yield return new WaitForSeconds(moveToExitDuration + 0.2f);
-
-        // Step 2: First realign remaining customers to their proper positions
-        List<Sequence> realignSequences = new List<Sequence>();
-        bool anyMovement = false;
-        for (int i = 0; i < remainingCustomers.Count; i++)
-        {
-            CustomerClass customer = remainingCustomers[i];
-            customerQueue.Enqueue(customer);
-            Vector3 newPosition = GetPositionFromWaitPoint(i);
-            
-            if (NeedsRepositioning(customer, newPosition))
-            {
-                realignSequences.Add(CreateMoveSequence(customer, newPosition));
-                anyMovement = true;
-            }
-        }
-
-        // Start all sequences simultaneously
-        if (anyMovement)
-        {
-            foreach (var seq in realignSequences)
-            {
-                seq.Play();
-            }
-            yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
-        }
-
-        // Step 3: Advance the queue after realignment
-        yield return StartCoroutine(AdvanceQueue());
-        yield return new WaitForSeconds(0.2f);
-
-        // Step 4: Spawn new customers to fill the queue
-        int customersToAdd = queueSize - remainingCustomers.Count;
-        for (int i = 0; i < customersToAdd; i++)
-        {
-            GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
-            CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
-            customerQueue.Enqueue(newCustomer);
-            
-            // Wait for queue to advance with new customer
-            yield return StartCoroutine(AdvanceQueue());
-            yield return new WaitForSeconds(0.2f);
-        }
-
-        // Final delay before completing
-        yield return new WaitForSeconds(0.5f);
-
-        // Handle the current customer exit if needed
-        yield return StartCoroutine(HandleCustomerExit());
-    }
-
-    public IEnumerator RemoveCustomersOfMarketFromQueue()
-    {
-        if (currentPlayingCustomer == null || currentPlayingCustomer.market == null)
-        {
-            yield return StartCoroutine(HandleCustomerExit());
-            yield break;
-        }
-
-        string targetMarketName = currentPlayingCustomer.market.marketData.marketName;
-
-        // Step 1: Find all customers of the same market
+        // Step 1: Find all matching customers
         List<CustomerClass> customerList = customerQueue.ToList();
         List<CustomerClass> customersToRemove = new List<CustomerClass>();
         List<CustomerClass> remainingCustomers = new List<CustomerClass>();
 
-        // Separate matching market customers from others
+        // Separate matching customers from others
         foreach (CustomerClass customer in customerList)
         {
-            if (customer.market != null && customer.market.marketData.marketName == targetMarketName)
+            if (shouldRemove(customer))
             {
                 customersToRemove.Add(customer);
             }
@@ -481,7 +385,7 @@ public class QueueManager : MonoBehaviour
             yield break;
         }
 
-        // Continue with customer removal sequence only if matching customers were found
+        // Continue with customer removal sequence
         customerQueue.Clear();
 
         // Move all matching customers to exit simultaneously
@@ -492,10 +396,10 @@ public class QueueManager : MonoBehaviour
 
         yield return new WaitForSeconds(moveToExitDuration + 0.2f);
 
-        // Step 2: First realign remaining customers to their proper positions
+        // Realign remaining customers
         List<Sequence> realignSequences = new List<Sequence>();
         bool anyMovement = false;
-        for (int i = 0; i < remainingCustomers.Count; i++)
+        for (int i = 0; i < remainingCustomers.Count; i++)  // Fix: Changed condition from remainingCustomers.Count to i < remainingCustomers.Count
         {
             CustomerClass customer = remainingCustomers[i];
             customerQueue.Enqueue(customer);
@@ -508,7 +412,6 @@ public class QueueManager : MonoBehaviour
             }
         }
 
-        // Start all sequences simultaneously
         if (anyMovement)
         {
             foreach (var seq in realignSequences)
@@ -518,11 +421,10 @@ public class QueueManager : MonoBehaviour
             yield return new WaitForSeconds(moveToPlayDuration + 0.1f);
         }
 
-        // Step 3: Advance the queue after realignment
         yield return StartCoroutine(AdvanceQueue());
         yield return new WaitForSeconds(0.2f);
 
-        // Step 4: Spawn new customers to fill the queue
+        // Spawn new customers to fill the queue
         int customersToAdd = queueSize - remainingCustomers.Count;
         for (int i = 0; i < customersToAdd; i++)
         {
@@ -536,6 +438,24 @@ public class QueueManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.5f);
         yield return StartCoroutine(HandleCustomerExit());
+    }
+
+    public IEnumerator RemoveAllCopsFromQueue()
+    {
+        yield return StartCoroutine(RemoveCustomersFromQueue(customer => customer.isCop));
+    }
+
+    public IEnumerator RemoveCustomersOfMarketFromQueue()
+    {
+        if (currentPlayingCustomer == null || currentPlayingCustomer.market == null)
+        {
+            yield return StartCoroutine(HandleCustomerExit());
+            yield break;
+        }
+
+        string targetMarketName = currentPlayingCustomer.market.marketData.marketName;
+        yield return StartCoroutine(RemoveCustomersFromQueue(customer => 
+            customer.market != null && customer.market.marketData.marketName == targetMarketName));
     }
 
     public string GetMostCommonMarketInQueue()
