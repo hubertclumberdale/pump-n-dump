@@ -417,6 +417,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1b6a7d96a2b394643b051b9352c40fa9, type: 2}
   - {fileID: 11400000, guid: e6efa74215f5545eaaa3413f4d00d9fd, type: 2}
   - {fileID: 11400000, guid: 48e8e1a4e004243c6b5e58895709270a, type: 2}
+  - {fileID: 11400000, guid: 275b0981554864bfbaf08a67addc175e, type: 2}
+  - {fileID: 11400000, guid: 2167e482e17dc433281d6d7e1e6239a2, type: 2}
+  - {fileID: 11400000, guid: dd50dcaa9883b4880a11bbb9862132f2, type: 2}
+  - {fileID: 11400000, guid: 79b994bb21426438f946fd348d46acf8, type: 2}
+  - {fileID: 11400000, guid: 63e25c8e99f6a4ffab7bf8c3c8aa0456, type: 2}
 --- !u!1 &175718040
 GameObject:
   m_ObjectHideFlags: 0
@@ -2451,6 +2456,7 @@ Transform:
   - {fileID: 410408556}
   - {fileID: 971991104}
   - {fileID: 1388352685}
+  - {fileID: 1880279749}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &979339049
@@ -2478,6 +2484,9 @@ MonoBehaviour:
   jumpHeight: 0.3
   jumpsPerSecond: 4
   handPosition: {fileID: 1022776604}
+  waitPoint: {fileID: 1880279749}
+  distanceBetweenCustomers: 0.65
+  queueAngle: -11.3
 --- !u!1 &985406323
 GameObject:
   m_ObjectHideFlags: 0
@@ -4746,6 +4755,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 94511496}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1880279748
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1880279749}
+  m_Layer: 0
+  m_Name: WaitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1880279749
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1880279748}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.889, y: -2.202034, z: 0.856}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 979339048}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1902246165
 GameObject:
