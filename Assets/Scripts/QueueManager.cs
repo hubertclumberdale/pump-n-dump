@@ -458,6 +458,12 @@ public class QueueManager : MonoBehaviour
             customer.market != null && customer.market.marketData.marketName == targetMarketName));
     }
 
+    public IEnumerator RemoveCustomersOfFailedMarket(string failedMarketName)
+    {
+        yield return StartCoroutine(RemoveCustomersFromQueue(customer => 
+            customer.market != null && customer.market.marketData.marketName == failedMarketName));
+    }
+
     public string GetMostCommonMarketInQueue()
     {
         Dictionary<string, int> marketCounts = new Dictionary<string, int>();

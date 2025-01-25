@@ -90,13 +90,40 @@ public class MarketManager : MonoBehaviour
         if (market.marketValue <= 0)
         {
             market.marketValue = 0;  // Ensure it's exactly 0
-            GameManager.Instance.LoseGame(market.marketData.marketName);
+            RemoveMarket(market);
         }
         else if (market.marketValue >= 100)
         {
             market.marketValue = 100;  // Ensure it's exactly 100
             GameManager.Instance.WinGame(market.marketData.marketName);
         }
+    }
+
+    public void RemoveMarket(MarketClass market)
+    {
+        // Don't remove if it's the last market
+        if (markets.Count <= 1)
+        {
+            GameManager.Instance.LoseGame(market.marketData.marketName);
+            return;
+        }
+
+        // If this was the target market, assign a new one
+        if (PlayerManager.Instance.IsTargetMarket(market.marketData.marketName))
+        {
+            markets.Remove(market);
+            PlayerManager.Instance.AssignNewTargetMarket();
+        }
+        else
+        {
+            markets.Remove(market);
+        }
+
+        // Start coroutine to remove customers with this market
+        StartCoroutine(QueueManager.Instance.RemoveCustomersOfFailedMarket(market.marketData.marketName));
+
+        // Fade out and destroy the market UI
+        market.FadeOutAndDestroy();
     }
 
     // Metodo per aggiornare tutti i mercati nella UI (ad esempio all'inizio del gioco)

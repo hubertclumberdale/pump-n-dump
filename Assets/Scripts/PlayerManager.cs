@@ -92,6 +92,18 @@ public class PlayerManager : MonoBehaviour
         return targetMarket != null && targetMarket.marketData.marketName == marketName;
     }
 
+    public void AssignNewTargetMarket()
+    {
+        targetMarket = MarketManager.Instance.AssignRandomMarket();
+        UpdateTargetMarketUI();
+        
+        // Optional: Add some visual feedback that target has changed
+        if (targetMarketIcon != null)
+        {
+            targetMarketIcon.transform.DOPunchScale(Vector3.one * 0.2f, 0.3f, 5, 0.5f);
+        }
+    }
+
     private IEnumerator DrawInitialHandCoroutine()
     {
         for (int i = 0; i < maxHandSize; i++)

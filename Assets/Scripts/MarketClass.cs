@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;  // Add TextMeshPro namespace
+using TMPro;
+using DG.Tweening;  // Add this line for DOTween
 
 public class MarketClass : MonoBehaviour
 {
@@ -73,5 +74,35 @@ public class MarketClass : MonoBehaviour
 /*                 iconImage.transform.DOShakeScale(0.3f, 0.1f);
  */            }
         }
+    }
+
+    public void FadeOutAndDestroy()
+    {
+        // Fade out all UI elements
+        if (barOutlineImage != null)
+        {
+            barOutlineImage.color = new Color(barOutlineImage.color.r, barOutlineImage.color.g, barOutlineImage.color.b, 1f);
+            barOutlineImage.DOFade(0, 0.5f);
+        }
+        
+        if (barFillImage != null)
+        {
+            barFillImage.color = new Color(barFillImage.color.r, barFillImage.color.g, barFillImage.color.b, 1f);
+            barFillImage.DOFade(0, 0.5f);
+        }
+        
+        if (valueText != null)
+        {
+            valueText.DOFade(0, 0.5f);
+        }
+        
+        if (iconImage != null)
+        {
+            iconImage.color = new Color(iconImage.color.r, iconImage.color.g, iconImage.color.b, 1f);
+            iconImage.DOFade(0, 0.5f);
+        }
+            
+        // Destroy after fade
+        Destroy(gameObject, 0.6f);
     }
 }

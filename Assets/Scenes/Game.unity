@@ -411,17 +411,21 @@ MonoBehaviour:
   cardSpacing: 0.001
   drawAnimationDuration: 2
   possibleCards:
-  - {fileID: 11400000, guid: 23b5b2cbc439e4429b47755c7705a204, type: 2}
-  - {fileID: 11400000, guid: ba6197fd7a0494c6bb1e7b13f132a1b2, type: 2}
-  - {fileID: 11400000, guid: 4e51f12cc53b34b8895e268cf1390f60, type: 2}
-  - {fileID: 11400000, guid: 1b6a7d96a2b394643b051b9352c40fa9, type: 2}
-  - {fileID: 11400000, guid: e6efa74215f5545eaaa3413f4d00d9fd, type: 2}
-  - {fileID: 11400000, guid: 48e8e1a4e004243c6b5e58895709270a, type: 2}
-  - {fileID: 11400000, guid: 275b0981554864bfbaf08a67addc175e, type: 2}
-  - {fileID: 11400000, guid: 2167e482e17dc433281d6d7e1e6239a2, type: 2}
-  - {fileID: 11400000, guid: dd50dcaa9883b4880a11bbb9862132f2, type: 2}
-  - {fileID: 11400000, guid: 79b994bb21426438f946fd348d46acf8, type: 2}
-  - {fileID: 11400000, guid: 63e25c8e99f6a4ffab7bf8c3c8aa0456, type: 2}
+  - {fileID: 11400000, guid: 63a080c06eff90e41b09bb69343bf7b8, type: 2}
+  - {fileID: 11400000, guid: 5d36c8d5184001440b16ac2b1e995b05, type: 2}
+  - {fileID: 11400000, guid: b0095d7e7d539cb43904578a6d90d801, type: 2}
+  - {fileID: 11400000, guid: e381738bf8c77c64f9fd46458811e764, type: 2}
+  - {fileID: 11400000, guid: a4d6d5c0a5ff50d40b5ab5600e1007c1, type: 2}
+  - {fileID: 11400000, guid: 0a5795e10e7410a44a254f432297ce91, type: 2}
+  - {fileID: 11400000, guid: 09237312249e7c14eae735feee86f5ce, type: 2}
+  - {fileID: 11400000, guid: 022b6ae0050073548a5df29d73c34d86, type: 2}
+  - {fileID: 11400000, guid: d3238abb51dc09d49b12a0e474627af6, type: 2}
+  - {fileID: 11400000, guid: 7fda7593d5f03c048abb8d37d5e36cd1, type: 2}
+  - {fileID: 11400000, guid: 80f7b7dfc40229e44b55ebd27bcc817a, type: 2}
+  - {fileID: 11400000, guid: 77ea2d8000d57194ba92638f0f9c5669, type: 2}
+  - {fileID: 11400000, guid: 54f7bf810e969f3408b5e358f3721892, type: 2}
+  - {fileID: 11400000, guid: bf585a717bdd23945a67e93e68b9c7a0, type: 2}
+  - {fileID: 11400000, guid: faa161a67b385c34497f2c11c936942b, type: 2}
 --- !u!1 &175718040
 GameObject:
   m_ObjectHideFlags: 0
