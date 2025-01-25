@@ -337,4 +337,78 @@ public class QueueManager : MonoBehaviour
         // Now handle the customer exit and next customer
         yield return StartCoroutine(HandleCustomerExit());
     }
+
+    public IEnumerator RemoveAllCopsFromQueue()
+    {
+        // Step 1: Find all cops and move them to exit
+        List<CustomerClass> customerList = customerQueue.ToList();
+        List<CustomerClass> copsToRemove = new List<CustomerClass>();
+        List<CustomerClass> remainingCustomers = new List<CustomerClass>();
+
+        // Separate cops from civilians
+        foreach (CustomerClass customer in customerList)
+        {
+            if (customer.isCop)
+            {
+                copsToRemove.Add(customer);
+            }
+            else
+            {
+                remainingCustomers.Add(customer);
+            }
+        }
+
+        // Clear the queue
+        customerQueue.Clear();
+
+        // Move all cops to exit simultaneously
+        foreach (CustomerClass cop in copsToRemove)
+        {
+            StartCoroutine(MoveCustomerToExit(cop));
+        }
+
+        // Wait for cops to reach exit
+        if (copsToRemove.Count > 0)
+        {
+            yield return new WaitForSeconds(moveToExitDuration + 0.2f);
+        }
+
+        // Step 2: Realign remaining customers
+        for (int i = 0; i < remainingCustomers.Count; i++)
+        {
+            CustomerClass customer = remainingCustomers[i];
+            customerQueue.Enqueue(customer);
+            Vector3 newPosition = GetQueuePosition(remainingCustomers.Count - 1 - i);
+            
+            Sequence moveSequence = DOTween.Sequence();
+            moveSequence.Append(customer.transform.DOMove(newPosition, 0.5f)
+                .SetEase(Ease.InOutQuad));
+        }
+
+        // Wait for realignment
+        yield return new WaitForSeconds(0.5f);
+
+        // Step 3: Spawn new customers to fill the queue
+        int customersToAdd = queueSize - remainingCustomers.Count;
+        for (int i = 0; i < customersToAdd; i++)
+        {
+            GameObject newCustomerObject = Instantiate(customerPrefab, spawnPoint.position, spawnPoint.rotation);
+            CustomerClass newCustomer = newCustomerObject.GetComponent<CustomerClass>();
+            customerQueue.Enqueue(newCustomer);
+
+            Vector3 targetPos = GetQueuePosition(customersToAdd - 1 - i);
+            
+            Sequence spawnSequence = DOTween.Sequence();
+            spawnSequence.Append(newCustomer.transform.DOMove(targetPos, 0.5f)
+                .SetEase(Ease.OutQuad));
+
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        // Final delay before completing
+        yield return new WaitForSeconds(0.5f);
+
+        // Handle the current customer exit if needed
+        yield return StartCoroutine(HandleCustomerExit());
+    }
 }
