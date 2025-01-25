@@ -29,6 +29,8 @@ public class CardScriptable : ScriptableObject
     public bool resetQueue;
     public bool resetHand;
 
+    public bool removeCurrentCustomersFromQueue;
+
     public bool removesCopFromQueue;
     public bool movesCopToEndOfQueue;
 }

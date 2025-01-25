@@ -10,22 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68024fca259694c91a2e4d724b3a7814, type: 3}
-  m_Name: Reset Hand
+  m_Name: Remove Current customers from queue
   m_EditorClassIdentifier: 
-  cardName: Reset Hand
-  description: Cambia tutte le tue carte
-  probability: 0.8
+  cardName: Affects Worst Market
+  description: Dai un +5 al peggiore market
+  probability: 0.5
   color: {r: 0.7647059, g: 0.5372549, b: 0.5794795, a: 1}
   cardSprite: {fileID: -2131019442, guid: 422329838235ca74196c1084e5595658, type: 3}
-  valueForTarget: 0
+  valueForTarget: 50
   valueForOthers: 0
   numberOfNextAffectedCustomers: 0
   affectsAllOtherMarketsToo: 0
-  affectsWorstMarket: 0
+  affectsWorstMarket: 1
   affectsBestMarket: 0
   shuffleQueue: 0
   resetQueue: 0
-  resetHand: 1
-  removeCurrentCustomersFromQueue: 0
+  resetHand: 0
   removesCopFromQueue: 0
   movesCopToEndOfQueue: 0

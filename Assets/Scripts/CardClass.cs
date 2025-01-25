@@ -196,7 +196,15 @@ public class CardClass : MonoBehaviour
             MarketManager.Instance.ModifyMarketValue(bestMarketName, cardData.valueForTarget);
         }
 
-        if(!cardData.shuffleQueue && !cardData.resetQueue && !cardData.removesCopFromQueue && !cardData.resetHand){
+        if (cardData.removeCurrentCustomersFromQueue)
+        {
+            QueueManager.Instance.StartCoroutine(QueueManager.Instance.RemoveCustomersOfMarketFromQueue());
+        }
+
+        if(!cardData.shuffleQueue && !cardData.resetQueue && 
+           !cardData.removesCopFromQueue && !cardData.resetHand && 
+           !cardData.removeCurrentCustomersFromQueue)
+        {
             QueueManager.Instance.StartCoroutine(QueueManager.Instance.HandleCustomerExit());
         }
     }
