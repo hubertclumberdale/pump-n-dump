@@ -62,8 +62,7 @@ public class GameManager : MonoBehaviour
             DisplayStatus($"Wrong market! {marketName} reached 100% but your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
         }
         
-        isGameRunning = false;
-        UpdateButtonText();
+        GameOver();
     }
 
     public void LoseGame(string marketName)
@@ -71,9 +70,7 @@ public class GameManager : MonoBehaviour
         if (!isGameRunning) return;
         
         DisplayStatus($"Game Lost! Market {marketName} crashed to 0!");
-        isGameRunning = false;
-        // TODO: Show lose screen or animation
-        UpdateButtonText();
+        GameOver();
     }
 
     public void LoseGameCop()
@@ -81,9 +78,7 @@ public class GameManager : MonoBehaviour
         if (!isGameRunning) return;
         
         DisplayStatus("Game Over - Busted by the cops!");
-        isGameRunning = false;
-        IsGameOver = true;
-        UpdateButtonText();
+        GameOver();
     }
 
     public void EndGameDeckEmpty()
@@ -107,9 +102,7 @@ public class GameManager : MonoBehaviour
             }
         }
         
-        isGameRunning = false;
-        IsGameOver = true;
-        UpdateButtonText();
+        GameOver();
     }
 
     private void UpdateButtonText()
@@ -159,5 +152,12 @@ public class GameManager : MonoBehaviour
     {
         IsGameOver = false;
         
+    }
+
+    public void GameOver()
+    {
+        isGameRunning = false;
+        IsGameOver = true;
+        UpdateButtonText();
     }
 }

@@ -212,24 +212,14 @@ public class QueueManager : MonoBehaviour
             CustomerClass customer = customerQueue.Dequeue();
             currentPlayingCustomer = customer; // Store reference
             
-            // Check if cop immediately when they reach play position
-            if (customer.isCop)
-            {
-                GameManager.Instance.LoseGameCop();
-                yield break;
-            }
-
+            // Move the customer (even if they're a cop) to the play position first
             Sequence moveSequence = DOTween.Sequence();
-            
-            // Base movement
             moveSequence.Append(customer.transform.DOMove(playPosition.position, moveToPlayDuration)
                 .SetEase(Ease.Linear));
             
-            // Calculate total jumps based on duration and frequency
             int totalJumps = Mathf.FloorToInt(moveToPlayDuration * jumpsPerSecond);
             float jumpDuration = moveToPlayDuration / totalJumps;
 
-            // Add rapid small jumps
             for (int i = 0; i < totalJumps; i++)
             {
                 moveSequence.Join(customer.transform.DOMoveY(
@@ -241,15 +231,20 @@ public class QueueManager : MonoBehaviour
             }
 
             yield return moveSequence.WaitForCompletion();
-            customerAtPlayPosition = true; // Set flag when customer reaches play position
-            AddRandomCustomerToQueue();
-            // Advance the remaining queue
-            yield return AdvanceQueue();
+            customerAtPlayPosition = true;
 
-            // Add new customer at the end
-            
+            // Only check for cop and trigger game over after they've reached the position
+            if (customer.isCop)
+            {
+                yield return new WaitForSeconds(0.5f); // Add a small dramatic pause
+                GameManager.Instance.LoseGameCop();
+                yield break;
+            }
+
+            AddRandomCustomerToQueue();
+            yield return AdvanceQueue();
         }
-        yield break; // Added to handle case when conditions aren't met
+        yield break;
     }
 
     public IEnumerator HandleCustomerExit()
