@@ -156,7 +156,9 @@ public class PlayerManager : MonoBehaviour
 
     public bool CanPlayCards()
     {
-        return QueueManager.Instance.currentPlayingCustomer != null && !hasPlayedCardThisTurn;
+        return QueueManager.Instance.currentPlayingCustomer != null && 
+               !hasPlayedCardThisTurn && 
+               !GameManager.Instance.IsGameOver;
     }
 
     public void PlayCard(int cardIndex)

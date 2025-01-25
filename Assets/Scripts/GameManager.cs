@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
     public Button playResetButton;
     public TextMeshProUGUI statusText;  // Add reference to status text
     private bool isGameRunning = false;
+    public bool IsGameOver { get; private set; }
 
     void Awake()
     {
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour
         
         DisplayStatus("Game Over - Busted by the cops!");
         isGameRunning = false;
+        IsGameOver = true;
         UpdateButtonText();
     }
 
@@ -106,6 +108,7 @@ public class GameManager : MonoBehaviour
         }
         
         isGameRunning = false;
+        IsGameOver = true;
         UpdateButtonText();
     }
 
@@ -127,6 +130,7 @@ public class GameManager : MonoBehaviour
     {
         ResetGame();
         DisplayStatus("Game Started!");
+        Initialize();
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();
@@ -136,6 +140,7 @@ public class GameManager : MonoBehaviour
     private void ResetGame()
     {
         DisplayStatus("Game Reset!");
+        Initialize();
         PlayerManager.Instance.Reset(); 
         MarketManager.Instance.Reset();
         DeckManager.Instance.Reset();
@@ -148,5 +153,11 @@ public class GameManager : MonoBehaviour
         {
             statusText.text = message;
         }
+    }
+
+    public void Initialize()
+    {
+        IsGameOver = false;
+        
     }
 }
