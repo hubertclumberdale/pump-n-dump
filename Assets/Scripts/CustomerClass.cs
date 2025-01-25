@@ -31,6 +31,8 @@ public class CustomerClass : MonoBehaviour
     public Sprite[] copLegSprites;
     public Sprite[] copArmSprites;
 
+    private Animator animator;
+
     public void ForceCivilian()
     {
         forceNoCop = true;
@@ -54,6 +56,10 @@ public class CustomerClass : MonoBehaviour
             RandomizeBodyParts();
             ApplyColorToBodyParts(copColor);
         }
+
+        animator = GetComponent<Animator>();
+        // Imposta una velocità casuale (0.5x - 2x la velocità normale)
+        animator.speed = Random.Range(0.4f, 1.5f);
     }
 
     private void RandomizeBodyParts()
