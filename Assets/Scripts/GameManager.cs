@@ -125,6 +125,7 @@ public class GameManager : MonoBehaviour
 
     private void StartGame()
     {
+        ResetGame();
         DisplayStatus("Game Started!");
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
