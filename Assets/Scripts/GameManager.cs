@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public Image buttonIcon;   // Reference to the button's image component
     public GameObject winScreen;     // Changed to GameObject
     public GameObject loseScreen;    // Changed to GameObject
+    public GameObject copScreen;     // Add this new screen
 
     void Awake()
     {
@@ -40,6 +41,7 @@ public class GameManager : MonoBehaviour
         // Initialize screens as hidden
         if (winScreen != null) winScreen.SetActive(false);
         if (loseScreen != null) loseScreen.SetActive(false);
+        if (copScreen != null) copScreen.SetActive(false);
     }
 
     private void HandlePlayResetButton()
@@ -64,6 +66,7 @@ public class GameManager : MonoBehaviour
         {
             winScreen.SetActive(true);
             loseScreen.SetActive(false);
+            copScreen.SetActive(false);
         }
     }
 
@@ -73,6 +76,17 @@ public class GameManager : MonoBehaviour
         {
             loseScreen.SetActive(true);
             winScreen.SetActive(false);
+            copScreen.SetActive(false);
+        }
+    }
+
+    private void ShowCopScreen()
+    {
+        if (copScreen != null)
+        {
+            copScreen.SetActive(true);
+            winScreen.SetActive(false);
+            loseScreen.SetActive(false);
         }
     }
 
@@ -80,6 +94,7 @@ public class GameManager : MonoBehaviour
     {
         if (winScreen != null) winScreen.SetActive(false);
         if (loseScreen != null) loseScreen.SetActive(false);
+        if (copScreen != null) copScreen.SetActive(false);
     }
 
     private void HandleWinCondition(string marketName, bool isTargetMarket)
@@ -121,7 +136,9 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameRunning) return;
         AudioManager.Instance.PlayCopCatchSound();
-        HandleLoseCondition("Game Over - Busted by the cops!");
+        DisplayStatus("Game Over - Busted by the cops!");
+        ShowCopScreen();  // Use dedicated cop screen instead of lose screen
+        GameOver();
     }
 
     public void EndGameDeckEmpty()
