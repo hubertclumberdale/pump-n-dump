@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,9 @@ public class GameManager : MonoBehaviour
     public GameObject winScreen;     // Changed to GameObject
     public GameObject loseScreen;    // Changed to GameObject
     public GameObject copScreen;     // Add this new screen
+    
+    [Header("Animation Settings")]
+    public float screenAnimationDuration = 0.5f;  // Replace const with public field
 
     void Awake()
     {
@@ -60,34 +64,44 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void ShowScreenWithAnimation(GameObject screen)
+    {
+        if (screen != null)
+        {
+            // Hide other screens immediately
+            if (winScreen != null && winScreen != screen) winScreen.SetActive(false);
+            if (loseScreen != null && loseScreen != screen) loseScreen.SetActive(false);
+            if (copScreen != null && copScreen != screen) copScreen.SetActive(false);
+
+            // Setup initial state
+            screen.SetActive(true);
+            screen.transform.localScale = Vector3.zero;
+            screen.transform.rotation = Quaternion.Euler(0, 0, -180f); // Start rotated
+
+            // Create animation sequence
+            Sequence showSequence = DOTween.Sequence();
+            
+            // Rotate while scaling up
+            showSequence.Append(screen.transform.DOScale(Vector3.one, screenAnimationDuration)
+                .SetEase(Ease.OutBack));
+            showSequence.Join(screen.transform.DORotate(Vector3.zero, screenAnimationDuration)
+                .SetEase(Ease.OutBounce));
+        }
+    }
+
     private void ShowWinScreen()
     {
-        if (winScreen != null)
-        {
-            winScreen.SetActive(true);
-            loseScreen.SetActive(false);
-            copScreen.SetActive(false);
-        }
+        ShowScreenWithAnimation(winScreen);
     }
 
     private void ShowLoseScreen()
     {
-        if (loseScreen != null)
-        {
-            loseScreen.SetActive(true);
-            winScreen.SetActive(false);
-            copScreen.SetActive(false);
-        }
+        ShowScreenWithAnimation(loseScreen);
     }
 
     private void ShowCopScreen()
     {
-        if (copScreen != null)
-        {
-            copScreen.SetActive(true);
-            winScreen.SetActive(false);
-            loseScreen.SetActive(false);
-        }
+        ShowScreenWithAnimation(copScreen);
     }
 
     private void HideResultScreens()
