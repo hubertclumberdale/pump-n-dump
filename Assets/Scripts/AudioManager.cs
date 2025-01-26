@@ -25,6 +25,9 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float customerSoundVolume = 0.3f;  // Add volume control for customer sounds
     [Range(0f, 1f)] public float mainEffectsVolume = 1f;      // Add volume control for other effects
 
+    [Header("Sound Settings")]
+    [Range(0f, 1f)] public float pitchVariation = 0.2f;  // Add this for pitch randomization
+
     private void Awake()
     {
         if (Instance == null)
@@ -68,12 +71,19 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    private float GetRandomPitch()
+    {
+        return 1f + Random.Range(-pitchVariation, pitchVariation);
+    }
+
     public void PlayCustomerMove()
     {
         if (customerMoveSounds.Count > 0)
         {
             int randomIndex = Random.Range(0, customerMoveSounds.Count);
+            effectsSource.pitch = GetRandomPitch();
             effectsSource.PlayOneShot(customerMoveSounds[randomIndex], customerSoundVolume);
+            effectsSource.pitch = 1f;  // Reset pitch after playing
         }
     }
 
