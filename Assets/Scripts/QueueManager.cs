@@ -271,8 +271,7 @@ public class QueueManager : MonoBehaviour
 
     public IEnumerator MoveCustomerToExit(CustomerClass customer)
     {
-        AudioManager.Instance.PlayPlayerNext();
-        AudioManager.Instance.PlayCustomerMove();  // Keep this for exiting
+        AudioManager.Instance.PlayCustomerMove();  // Keep only customer move sound here
         Sequence exitSequence = DOTween.Sequence();
         
         // Base movement

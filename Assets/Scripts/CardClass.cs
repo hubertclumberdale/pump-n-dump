@@ -117,6 +117,7 @@ public class CardClass : MonoBehaviour
 
         playSequence.OnComplete(() => {
             ApplyCardEffects();
+            AudioManager.Instance.PlayPlayerNext();  // Add this here
             QueueManager.Instance.StartCoroutine(DestroyAfterEffects());
         });
     }
