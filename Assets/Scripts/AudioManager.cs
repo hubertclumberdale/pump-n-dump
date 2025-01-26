@@ -8,6 +8,7 @@ public class AudioManager : MonoBehaviour
     [Header("Audio Sources")]
     [SerializeField] private AudioSource effectsSource;
     [SerializeField] private AudioSource musicSource;
+    [SerializeField] private AudioSource customerEffectsSource;  // Add this line
 
     [Header("Music Tracks")]
     [SerializeField] private AudioClip menuMusic;
@@ -39,6 +40,10 @@ public class AudioManager : MonoBehaviour
             if (effectsSource != null)
             {
                 effectsSource.volume = mainEffectsVolume;
+            }
+            if (customerEffectsSource != null)
+            {
+                customerEffectsSource.volume = customerSoundVolume;
             }
         }
         else
@@ -81,9 +86,9 @@ public class AudioManager : MonoBehaviour
         if (customerMoveSounds.Count > 0)
         {
             int randomIndex = Random.Range(0, customerMoveSounds.Count);
-            effectsSource.pitch = GetRandomPitch();
-            effectsSource.PlayOneShot(customerMoveSounds[randomIndex], customerSoundVolume);
-            effectsSource.pitch = 1f;  // Reset pitch after playing
+            customerEffectsSource.pitch = GetRandomPitch();
+            customerEffectsSource.PlayOneShot(customerMoveSounds[randomIndex], customerSoundVolume);
+            customerEffectsSource.pitch = 1f;  // Reset pitch after playing
         }
     }
 
