@@ -121,7 +121,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            DisplayStatus($"Wrong market! {marketName} reached 100% but your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
+            DisplayStatus($"It seems like you didn't really understand your market, your failure is everyone else's victory. Your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
             ShowLoseScreen();
         }
         GameOver();
@@ -143,7 +143,7 @@ public class GameManager : MonoBehaviour
     public void LoseGame(string marketName)
     {
         if (!isGameRunning) return;
-        HandleLoseCondition($"Game Lost! Market {marketName} crashed to 0!");
+        HandleLoseCondition($"It seems like you didn't really understand your market, your failure is everyone else's victory. Your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
     }
 
     public void LoseGameCop()
