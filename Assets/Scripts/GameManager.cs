@@ -33,13 +33,13 @@ public class GameManager : MonoBehaviour
             playResetButton.onClick.AddListener(HandlePlayResetButton);
             UpdateButtonText();
         }
+        AudioManager.Instance.PlayMenuMusic();  // Add this line to play menu music on start
     }
 
     private void HandlePlayResetButton()
     {
-        // Update game state first
         isGameRunning = !isGameRunning;
-        UpdateButtonText();  // Update text before actions
+        UpdateButtonText();
         
         if (isGameRunning)
         {
@@ -48,6 +48,7 @@ public class GameManager : MonoBehaviour
         else
         {
             ResetGame();
+            AudioManager.Instance.PlayMenuMusic();  // Add this line to play menu music when resetting
         }
     }
 
@@ -131,7 +132,7 @@ public class GameManager : MonoBehaviour
         ResetGame();
         DisplayStatus("Game Started!");
         Initialize();
-        AudioManager.Instance.PlayGameplayMusic();
+        AudioManager.Instance.PlayGameplayMusic();  // Move this before other initializations
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();
