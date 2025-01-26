@@ -17,6 +17,7 @@ MonoBehaviour:
   probability: 0.2
   color: {r: 0.8235294, g: 0.8235294, b: 0.8235294, a: 1}
   cardSprite: {fileID: 21300000, guid: 749227dbc13b3014a83a528f741575b8, type: 3}
+  playSound: {fileID: 8300000, guid: 86c626d2e15974f2d9b22f20b9ec42b7, type: 3}
   valueForTarget: 0
   valueForOthers: 0
   numberOfNextAffectedCustomers: 0
