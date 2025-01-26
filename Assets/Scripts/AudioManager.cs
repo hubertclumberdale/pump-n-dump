@@ -88,7 +88,6 @@ public class AudioManager : MonoBehaviour
             int randomIndex = Random.Range(0, customerMoveSounds.Count);
             customerEffectsSource.pitch = GetRandomPitch();
             customerEffectsSource.PlayOneShot(customerMoveSounds[randomIndex], customerSoundVolume);
-            customerEffectsSource.pitch = 1f;  // Reset pitch after playing
         }
     }
 
