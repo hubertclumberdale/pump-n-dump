@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public Sprite playIcon;   // Reference to play icon sprite
     public Sprite restartIcon; // Reference to restart icon sprite
     public Image buttonIcon;   // Reference to the button's image component
+    public GameObject winScreen;     // Changed to GameObject
+    public GameObject loseScreen;    // Changed to GameObject
 
     void Awake()
     {
@@ -34,6 +36,10 @@ public class GameManager : MonoBehaviour
             UpdateButtonText();
         }
         AudioManager.Instance.PlayMenuMusic();  // Add this line to play menu music on start
+        
+        // Initialize screens as hidden
+        if (winScreen != null) winScreen.SetActive(false);
+        if (loseScreen != null) loseScreen.SetActive(false);
     }
 
     private void HandlePlayResetButton()
@@ -52,40 +58,70 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void WinGame(string marketName)
+    private void ShowWinScreen()
     {
-        if (!isGameRunning) return;
-        
+        if (winScreen != null)
+        {
+            winScreen.SetActive(true);
+            loseScreen.SetActive(false);
+        }
+    }
+
+    private void ShowLoseScreen()
+    {
+        if (loseScreen != null)
+        {
+            loseScreen.SetActive(true);
+            winScreen.SetActive(false);
+        }
+    }
+
+    private void HideResultScreens()
+    {
+        if (winScreen != null) winScreen.SetActive(false);
+        if (loseScreen != null) loseScreen.SetActive(false);
+    }
+
+    private void HandleWinCondition(string marketName, bool isTargetMarket)
+    {
         AudioManager.Instance.PlayWinSound();
-        bool isTargetMarket = PlayerManager.Instance.IsTargetMarket(marketName);
-                             
         if (isTargetMarket)
         {
             DisplayStatus($"Congratulations! You successfully pumped {marketName} to 100%!");
+            ShowWinScreen();
         }
         else
         {
             DisplayStatus($"Wrong market! {marketName} reached 100% but your target was {PlayerManager.Instance.targetMarket.marketData.marketName}");
+            ShowLoseScreen();
         }
-        
         GameOver();
+    }
+
+    private void HandleLoseCondition(string message)
+    {
+        DisplayStatus(message);
+        ShowLoseScreen();
+        GameOver();
+    }
+
+    public void WinGame(string marketName)
+    {
+        if (!isGameRunning) return;
+        HandleWinCondition(marketName, PlayerManager.Instance.IsTargetMarket(marketName));
     }
 
     public void LoseGame(string marketName)
     {
         if (!isGameRunning) return;
-        
-        DisplayStatus($"Game Lost! Market {marketName} crashed to 0!");
-        GameOver();
+        HandleLoseCondition($"Game Lost! Market {marketName} crashed to 0!");
     }
 
     public void LoseGameCop()
     {
         if (!isGameRunning) return;
-        
         AudioManager.Instance.PlayCopCatchSound();
-        DisplayStatus("Game Over - Busted by the cops!");
-        GameOver();
+        HandleLoseCondition("Game Over - Busted by the cops!");
     }
 
     public void EndGameDeckEmpty()
@@ -101,15 +137,13 @@ public class GameManager : MonoBehaviour
             
             if (targetValue >= 100)
             {
-                DisplayStatus($"You won! Successfully pumped {marketName} to {targetValue}%!");
+                HandleWinCondition(marketName, true);
             }
             else
             {
-                DisplayStatus($"You lost! {marketName} only reached {targetValue}%");
+                HandleLoseCondition($"You lost! {marketName} only reached {targetValue}%");
             }
         }
-        
-        GameOver();
     }
 
     private void UpdateButtonText()
@@ -132,7 +166,9 @@ public class GameManager : MonoBehaviour
         ResetGame();
         DisplayStatus("Game Started!");
         Initialize();
-        AudioManager.Instance.PlayGameplayMusic();  // Move this before other initializations
+        AudioManager.Instance.PlayGameplayMusic();
+        HideResultScreens();
+        
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();
