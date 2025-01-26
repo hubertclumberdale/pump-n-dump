@@ -21,12 +21,22 @@ public class AudioManager : MonoBehaviour
     [SerializeField] private AudioClip marketCrashSound;
     [SerializeField] private AudioClip copCatchSound;
 
+    [Header("Volume Settings")]
+    [Range(0f, 1f)] public float customerSoundVolume = 0.3f;  // Add volume control for customer sounds
+    [Range(0f, 1f)] public float mainEffectsVolume = 1f;      // Add volume control for other effects
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // Configure audio sources
+            if (effectsSource != null)
+            {
+                effectsSource.volume = mainEffectsVolume;
+            }
         }
         else
         {
@@ -63,7 +73,7 @@ public class AudioManager : MonoBehaviour
         if (customerMoveSounds.Count > 0)
         {
             int randomIndex = Random.Range(0, customerMoveSounds.Count);
-            effectsSource.PlayOneShot(customerMoveSounds[randomIndex]);
+            effectsSource.PlayOneShot(customerMoveSounds[randomIndex], customerSoundVolume);
         }
     }
 
@@ -72,23 +82,23 @@ public class AudioManager : MonoBehaviour
         if (playerNextSounds.Count > 0)
         {
             int randomIndex = Random.Range(0, playerNextSounds.Count);
-            effectsSource.PlayOneShot(playerNextSounds[randomIndex]);
+            effectsSource.PlayOneShot(playerNextSounds[randomIndex], mainEffectsVolume);
         }
     }
 
     public void PlayWinSound()
     {
-        effectsSource.PlayOneShot(winSound);
+        effectsSource.PlayOneShot(winSound, mainEffectsVolume);
     }
 
     public void PlayMarketCrashSound()
     {
-        effectsSource.PlayOneShot(marketCrashSound);
+        effectsSource.PlayOneShot(marketCrashSound, mainEffectsVolume);
     }
 
     public void PlayCopCatchSound()
     {
-        effectsSource.PlayOneShot(copCatchSound);
+        effectsSource.PlayOneShot(copCatchSound, mainEffectsVolume);
     }
 
     public void PlayDrawCard()
@@ -96,12 +106,12 @@ public class AudioManager : MonoBehaviour
         if (drawCardSounds.Count > 0)
         {
             int randomIndex = Random.Range(0, drawCardSounds.Count);
-            effectsSource.PlayOneShot(drawCardSounds[randomIndex]);
+            effectsSource.PlayOneShot(drawCardSounds[randomIndex], mainEffectsVolume);
         }
     }
 
     public void PlayCardSound(AudioClip cardSound)
     {
-        effectsSource.PlayOneShot(cardSound);
+        effectsSource.PlayOneShot(cardSound, mainEffectsVolume);
     }
 }
