@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68024fca259694c91a2e4d724b3a7814, type: 3}
-  m_Name: Shuffle cards
+  m_Name: The Heist
   m_EditorClassIdentifier: 
-  cardName: Shuffle cards
-  description: Shuffle cards, -5 to all
-  probability: 0.2
-  color: {r: 0.8207547, g: 0.8207547, b: 0.8207547, a: 1}
-  cardSprite: {fileID: 21300000, guid: 914de49b544e3974b913a1d44b5a74f5, type: 3}
-  valueForTarget: -5
-  valueForOthers: -5
+  cardName: The Heist
+  description: +30 to target, -10 to others
+  probability: 0.1
+  color: {r: 0.6961678, g: 0.22745097, b: 0.73333335, a: 1}
+  cardSprite: {fileID: 21300000, guid: 7ce446bb9731ac140920bfce6c2c6d8c, type: 3}
+  valueForTarget: 30
+  valueForOthers: -10
   numberOfNextAffectedCustomers: 0
   affectsAllOtherMarketsToo: 1
   affectsWorstMarket: 0
@@ -26,7 +26,7 @@ MonoBehaviour:
   affectsMostCommonMarket: 0
   shuffleQueue: 0
   resetQueue: 0
-  resetHand: 1
+  resetHand: 0
   removeCurrentCustomersFromQueue: 0
   removesCopFromQueue: 0
   movesCopToEndOfQueue: 0
