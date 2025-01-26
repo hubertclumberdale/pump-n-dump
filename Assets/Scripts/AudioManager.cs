@@ -16,10 +16,10 @@ public class AudioManager : MonoBehaviour
     [Header("Sound Effects")]
     [SerializeField] private List<AudioClip> customerMoveSounds;
     [SerializeField] private List<AudioClip> playerNextSounds;
+    [SerializeField] private List<AudioClip> drawCardSounds;
     [SerializeField] private AudioClip winSound;
     [SerializeField] private AudioClip marketCrashSound;
     [SerializeField] private AudioClip copCatchSound;
-    [SerializeField] private List<AudioClip> drawCardSounds;
 
     private void Awake()
     {
@@ -47,8 +47,15 @@ public class AudioManager : MonoBehaviour
     private void SwitchMusic(AudioClip newTrack)
     {
         musicSource.Stop();
-        musicSource.clip = newTrack;
-        musicSource.Play();
+        if (newTrack != null)
+        {
+            musicSource.clip = newTrack;
+            musicSource.Play();
+        }
+        else
+        {
+            Debug.LogWarning("No music track found!");
+        }
     }
 
     public void PlayCustomerMove()
@@ -91,5 +98,10 @@ public class AudioManager : MonoBehaviour
             int randomIndex = Random.Range(0, drawCardSounds.Count);
             effectsSource.PlayOneShot(drawCardSounds[randomIndex]);
         }
+    }
+
+    public void PlayCardSound(AudioClip cardSound)
+    {
+        effectsSource.PlayOneShot(cardSound);
     }
 }

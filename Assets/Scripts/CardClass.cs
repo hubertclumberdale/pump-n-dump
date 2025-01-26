@@ -93,6 +93,12 @@ public class CardClass : MonoBehaviour
     {
         cardButton.interactable = false;
 
+        // Play card-specific sound if available
+        if (cardData.playSound != null)
+        {
+            AudioManager.Instance.PlayCardSound(cardData.playSound);
+        }
+
         Sequence playSequence = DOTween.Sequence();
 
         // First move to position

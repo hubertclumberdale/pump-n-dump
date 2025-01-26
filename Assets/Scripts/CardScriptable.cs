@@ -13,6 +13,7 @@ public class CardScriptable : ScriptableObject
     [Header("Card Appearance")]
     public Color color;
     public Sprite cardSprite;
+    public AudioClip playSound;  // Add this field for card-specific sound
 
     public int valueForTarget;
     public int valueForOthers;

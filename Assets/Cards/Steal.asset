@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Steal
   description: +10 to target, -5 to others
-  probability: 0.3
+  probability: 1
   color: {r: 0.42352942, g: 1, b: 0.9098039, a: 1}
   cardSprite: {fileID: 21300000, guid: ddfff3ec766808642977aa4bdb718bc3, type: 3}
+  playSound: {fileID: 0}
   valueForTarget: 10
-  valueForOthers: -5
+  valueForOthers: -50
   numberOfNextAffectedCustomers: 0
   affectsAllOtherMarketsToo: 1
   affectsWorstMarket: 0

@@ -139,6 +139,7 @@ public class QueueManager : MonoBehaviour
     // New helper method to create move sequence
     private Sequence CreateMoveSequence(CustomerClass customer, Vector3 targetPosition)
     {
+        AudioManager.Instance.PlayCustomerMove();  // Add sound for any movement
         Sequence moveSequence = DOTween.Sequence();
         
         // Base movement
@@ -209,7 +210,7 @@ public class QueueManager : MonoBehaviour
     {
         if (customerQueue.Count > 0 && currentPlayingCustomer == null) // Double check that position is empty
         {
-            AudioManager.Instance.PlayCustomerMove();
+            AudioManager.Instance.PlayCustomerMove();  // Keep this for entering play position
             CustomerClass customer = customerQueue.Dequeue();
             currentPlayingCustomer = customer; // Store reference
             
@@ -271,7 +272,7 @@ public class QueueManager : MonoBehaviour
     public IEnumerator MoveCustomerToExit(CustomerClass customer)
     {
         AudioManager.Instance.PlayPlayerNext();
-        AudioManager.Instance.PlayCustomerMove();
+        AudioManager.Instance.PlayCustomerMove();  // Keep this for exiting
         Sequence exitSequence = DOTween.Sequence();
         
         // Base movement
