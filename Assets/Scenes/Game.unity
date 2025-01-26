@@ -5676,8 +5676,8 @@ MonoBehaviour:
   effectsSource: {fileID: 1541969566}
   musicSource: {fileID: 1779135108}
   customerEffectsSource: {fileID: 585410370}
-  menuMusic: {fileID: 0}
-  gameplayMusic: {fileID: 0}
+  menuMusic: {fileID: 8300000, guid: af0d275ea296f4f488515f85144357f9, type: 3}
+  gameplayMusic: {fileID: 8300000, guid: 94ea16b37a2c5434ebab85791c794d6e, type: 3}
   customerMoveSounds:
   - {fileID: 8300000, guid: bcc46b2efe2f34fc6b667754c74a494d, type: 3}
   - {fileID: 8300000, guid: 403a621cba37a43a1b342d4ac5d9858f, type: 3}
