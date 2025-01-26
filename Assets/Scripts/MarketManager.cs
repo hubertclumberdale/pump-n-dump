@@ -90,6 +90,7 @@ public class MarketManager : MonoBehaviour
         if (market.marketValue <= 0)
         {
             market.marketValue = 0;  // Ensure it's exactly 0
+            AudioManager.Instance.PlayMarketCrashSound();
             // Check if it's the target market
             if (PlayerManager.Instance.IsTargetMarket(market.marketData.marketName))
             {

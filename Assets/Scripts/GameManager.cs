@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameRunning) return;
         
+        AudioManager.Instance.PlayWinSound();
         bool isTargetMarket = PlayerManager.Instance.IsTargetMarket(marketName);
                              
         if (isTargetMarket)
@@ -81,6 +82,7 @@ public class GameManager : MonoBehaviour
     {
         if (!isGameRunning) return;
         
+        AudioManager.Instance.PlayCopCatchSound();
         DisplayStatus("Game Over - Busted by the cops!");
         GameOver();
     }
@@ -129,6 +131,7 @@ public class GameManager : MonoBehaviour
         ResetGame();
         DisplayStatus("Game Started!");
         Initialize();
+        AudioManager.Instance.PlayGameplayMusic();
         MarketManager.Instance.Initialize();
         DeckManager.Instance.Initialize();
         QueueManager.Instance.Initialize();

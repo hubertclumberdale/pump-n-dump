@@ -128,6 +128,7 @@ public class PlayerManager : MonoBehaviour
     {
         if (hand.Count < maxHandSize && DeckManager.Instance != null)
         {
+            AudioManager.Instance.PlayDrawCard();
             int emptyPos = FindFirstEmptyPosition();
             if (emptyPos != -1)
             {

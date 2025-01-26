@@ -209,6 +209,7 @@ public class QueueManager : MonoBehaviour
     {
         if (customerQueue.Count > 0 && currentPlayingCustomer == null) // Double check that position is empty
         {
+            AudioManager.Instance.PlayCustomerMove();
             CustomerClass customer = customerQueue.Dequeue();
             currentPlayingCustomer = customer; // Store reference
             
@@ -269,6 +270,8 @@ public class QueueManager : MonoBehaviour
 
     public IEnumerator MoveCustomerToExit(CustomerClass customer)
     {
+        AudioManager.Instance.PlayPlayerNext();
+        AudioManager.Instance.PlayCustomerMove();
         Sequence exitSequence = DOTween.Sequence();
         
         // Base movement
